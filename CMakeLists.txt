@@ -166,6 +166,10 @@ target_link_libraries(pr_vis
 	${catkin_LIBRARIES}
 )
 
+add_executable(itst2scan node/itst2scan_node.cpp src/itst2scan.cpp)
+target_link_libraries(itst2scan
+	${catkin_LIBRARIES}
+)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

@@ -1,0 +1,10 @@
+ITST_DESC : {
+    FILE_DIR : "/home/amsl/Pictures/ros_catkin_ws/itst_desc",
+    FILE_DIR2 : "/test_" ,
+    FILE_EXT : ".csv"
+}
+
+
+SCAN_CONTEXT : {
+    QUERY_IMAGE_FILE : "/home/amsl/Pictures/ros_catkin_ws/scan_context/0731/scan_context_  0_  0_noground.png" 
+}

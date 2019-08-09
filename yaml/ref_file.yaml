@@ -1,0 +1,3 @@
+ITST_FILE_DIR : "/home/amsl/Pictures/ros_catkin_ws/ref_data_manager"
+ITSI_FILE_DIR2 : "/d_kan_around/itst_desc" 
+ITST_FILE_EXT : ".csv"
