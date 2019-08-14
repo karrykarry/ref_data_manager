@@ -161,8 +161,8 @@ SET(CMAKE_CXX_FLAGS "-std=c++11 -O2 -g -Wall ${CMAKE_CXX_FLAGS}")
 # add_executable(${PROJECT_NAME}_node src/ref_data_manager_node.cpp)
 
 
-add_executable(pr_vis node/pr_vis_node.cpp src/pr_vis.cpp)
-target_link_libraries(pr_vis
+add_executable(pr2pose node/pr2pose_node.cpp src/pr2pose.cpp)
+target_link_libraries(pr2pose
 	${catkin_LIBRARIES}
 )
 

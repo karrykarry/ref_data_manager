@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-	
-	<node name="pr_vis" pkg="scan_context" type="pr_vis" output="screen" >
-		<!-- <remap from="/odometer" to="/integrated_to_init/kari" /> -->
-	</node>
-	
-</launch>
-

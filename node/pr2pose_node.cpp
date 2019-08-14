@@ -6,7 +6,7 @@
  *
 */ 
 #include<ros/ros.h>
-#include<pr_vis.hpp>
+#include<pr2pose.hpp>
 
 
 int main(int argc, char* argv[])
@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 
     ROS_INFO("\033[1;32m---->\033[0m pr_vis Started.");
 	
-	PR_vis pr_vis(n,priv_nh);	
+	PR2Pose pr2pose(n,priv_nh);	
 
 	ros::spin();
  

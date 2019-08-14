@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+	
+	<node name="pr2pose" pkg="ref_data_manager" type="pr2pose" output="screen" >
+		<rosparam file="$(find ref_data_manager)/config/pr_info.yaml"/>
+	</node>
+	
+</launch>
+

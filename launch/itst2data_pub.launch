@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+	
+	<node name="itst2data_pub" pkg="ref_data_manager" type="itst2scan" output="screen" >
+		<rosparam file="$(find ref_data_manager)/config/pr_info.yaml"/>
+		
+		<remap from="/score/best" to="/score/best/itst" />
+	</node>
+	
+</launch>
+
+

@@ -1,11 +1,10 @@
-#ifndef _PR_VIS_HPP_
-#define _PR_VIS_HPP_
+#ifndef _PR2POSE_HPP_
+#define _PR2POSE_HPP_
 #include<iostream>
 #include<vector>
 #include<sstream>
 #include<iomanip>
 #include<fstream>
-
 
 #include<ros/ros.h>
 #include<std_msgs/Empty.h>
@@ -13,10 +12,7 @@
 #include<visualization_msgs/Marker.h>
 #include<visualization_msgs/MarkerArray.h>
 
-
-using namespace std;
-
-class PR_vis{
+class PR2Pose{	
 
 	private:
 		ros::Publisher pr_num_vis_pub;
@@ -25,9 +21,10 @@ class PR_vis{
 		ros::Subscriber flag_sub;
 		
 		geometry_msgs::Point now_pose;
-		vector <geometry_msgs::Point> pr_poses;
+		std::vector <geometry_msgs::Point> pr_poses;
 
-		string output_txtfile;
+		std::string file_dir, file_dir2, file_dir3, file_name, file_ext;
+		std::string output_txtfile;
 		std::ofstream writing_file;
 
 		visualization_msgs::MarkerArray m_array;
@@ -35,8 +32,8 @@ class PR_vis{
 		visualization_msgs::Marker text_vis(const int num);
 	
 	public:
-		PR_vis(ros::NodeHandle n,ros::NodeHandle priv_nh);
-		~PR_vis();	
+		PR2Pose(ros::NodeHandle n,ros::NodeHandle priv_nh);
+		~PR2Pose();	
 		void odomCallback(const nav_msgs::OdometryConstPtr &msg);
 		void flagCallback(const std_msgs::EmptyConstPtr &msg);
 

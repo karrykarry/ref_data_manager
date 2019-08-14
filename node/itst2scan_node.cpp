@@ -14,9 +14,9 @@ int main(int argc, char* argv[])
 	ros::NodeHandle n;
 	ros::NodeHandle priv_nh("~");
 
-    ROS_INFO("\033[1;32m---->\033[0m itst2scan Started.");
+    ROS_INFO("\033[1;32m---->\033[0m itst2data_pub Started.");
 	
-	Itst2scan itst2scan(n,priv_nh);	
+	Itst2data_pub itst2data_pub(n,priv_nh);	
 
 	ros::spin();
  
