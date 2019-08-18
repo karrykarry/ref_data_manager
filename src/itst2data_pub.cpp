@@ -3,15 +3,22 @@
  （そこでのscan_contextをrefにするソース）
  *
  */
-#include"itst2scan.hpp"
+#include"itst2data_pub.hpp"
 
 Itst2data_pub::Itst2data_pub(ros::NodeHandle n,ros::NodeHandle private_nh_)
 {
 
-	estimate_num_pub = n.advertise<visualization_msgs::Marker>("/pr/estimate_num", 10);
 	pr_num_vis_pub = n.advertise<visualization_msgs::MarkerArray>("/pr/num/vis", 10, true);
+	more_estimate_num_pub = n.advertise<visualization_msgs::MarkerArray>("/pr/more_estimate_num/vis", 10, true);
+	most_estimate_num_pub = n.advertise<visualization_msgs::Marker>("/pr/most_estimate_num", 10);
 	
-	best_num_sub = n.subscribe<std_msgs::Int32>("/score/best", 1, &Itst2data_pub::itstcallback, this);
+	
+	
+	
+	
+	
+	best_score_sub = n.subscribe<std_msgs::Int32>("/score/best", 1, &Itst2data_pub::bestscorecallback, this);
+	all_score_sub = n.subscribe<std_msgs::Float64MultiArray>("/score/vis", 1, &Itst2data_pub::allscorecallback, this);
 	
 	
 	private_nh_.param("PR_INFO/FILE_DIR", file_dir, {"/home/amsl/Pictures/ros_catkin_ws/ref_data_manager"});
@@ -19,6 +26,8 @@ Itst2data_pub::Itst2data_pub(ros::NodeHandle n,ros::NodeHandle private_nh_)
 	private_nh_.param("PR_INFO/FILE_DIR3", file_dir3, {"/pose"});
 	private_nh_.param("PR_INFO/FILE_NAME", file_name, {"/list"});
 	private_nh_.param("PR_INFO/FILE_EXT", file_ext, {".txt"});
+
+	private_nh_.param("Number_of_candidate", num_candidate, {5});
 
 	pr_list_pub();
 
@@ -39,8 +48,8 @@ Itst2data_pub::make_vis_marker(const double now_x,const double now_y,const doubl
 	m.action = visualization_msgs::Marker::ADD;
 	m.lifetime = ros::Duration(0);
 	// 形
-	m.color.r = 1.0;
-	m.color.g = 0.0;
+	m.color.r = 0.5;
+	m.color.g = 0.5;
 	m.color.b = 0.0;
 	m.color.a = 1.0; 
 
@@ -127,24 +136,81 @@ Itst2data_pub::pr_list_pub(){
 
 
 void
-Itst2data_pub::num_vis(const int num){
+Itst2data_pub::color_change(visualization_msgs::Marker& marker, double r_val, double g_val, double b_val, double a_val){
+
+	marker.color.r = r_val;
+	marker.color.g = g_val;
+	marker.color.b = b_val;
+	marker.color.a = a_val; 
+
+}
+
+void
+Itst2data_pub::best_num_vis(const int num){
 	
 	visualization_msgs::Marker est_num;	//estimate_num
 	est_num =  make_vis_marker(pr_poses[num].x, pr_poses[num].y, pr_poses[num].z, num, 0);
+
+	color_change(est_num, 1.0, 1.0, 1.0, 1.0);	//white
 	
-	//color change
-	est_num.color.r = 1.0;
-	est_num.color.g = 1.0;
-	est_num.color.b = 1.0;
-	est_num.color.a = 1.0; 
-	
-	estimate_num_pub.publish(est_num);
+	most_estimate_num_pub.publish(est_num);
 }
 
 
 
 void
-Itst2data_pub::itstcallback(const std_msgs::Int32ConstPtr &msg){
-	num_vis(msg->data);	
+Itst2data_pub::bestscorecallback(const std_msgs::Int32ConstPtr &msg){
+	best_num_vis(msg->data);	
 
+}
+
+
+
+
+
+
+
+//今の所、スコアが同じだと上書きされてしまう
+//このcallbackが上位複数のを表示する以外にするのであれば関数化する
+void
+Itst2data_pub::allscorecallback(const std_msgs::Float64MultiArrayConstPtr &msg){
+	
+	std::map<double ,int> score2pr_num;	// double score, int pr_num
+	
+	std::vector<double> scores;	// double score, int pr_num
+
+	int pr_num=0;
+	double min_score = 1000;	//適当に大きい数字を入れた
+	for(auto score : msg->data){
+		double high_sort_score = 1.0/msg->data[pr_num]; //nth_element は小さい順にsortするから逆数を取った
+		min_score = MIN(min_score, high_sort_score);
+		scores.push_back(high_sort_score);
+
+		score2pr_num[high_sort_score] = pr_num;
+		pr_num++;
+	}
+	
+	std::nth_element(scores.begin(), scores.begin() + num_candidate, scores.end());
+	
+	scores.resize(num_candidate);
+
+	visualization_msgs::MarkerArray m_array;
+	visualization_msgs::Marker buffer_m;
+	int rank=1;
+	for(auto score : scores){
+		if(score != min_score){ //一番bestscore
+			pr_num = score2pr_num[score]; 	//prの番号を入れる（下のコードが長くなるから）
+			
+			buffer_m = make_vis_marker(pr_poses[pr_num].x, pr_poses[pr_num].y, pr_poses[pr_num].z, pr_num, rank);
+			color_change(buffer_m, 0.0, 1.0, 0.0, 1.0);	//green
+			
+			m_array.markers.push_back(buffer_m);
+		}
+		
+		// std::cout<<rank<<"位:"<<msg->data[score2pr_num[score]]<<":"<<score2pr_num[score]<<std::endl;
+		rank++;
+	}	
+	more_estimate_num_pub.publish(m_array);
+	
+	// std::cout<<std::endl;
 }

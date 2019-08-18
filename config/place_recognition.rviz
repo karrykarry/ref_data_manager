@@ -32,6 +32,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /Basic1
       Splitter Ratio: 0.5
     Tree Height: 522
 Visualization Manager:
@@ -69,24 +70,24 @@ Visualization Manager:
           Color: 255; 255; 255
           Color Transformer: Intensity
           Decay Time: 0
-          Enabled: false
+          Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
-          Max Intensity: 16.5696316
+          Max Intensity: 15.112855
           Min Color: 0; 0; 0
-          Min Intensity: -4.20274973
+          Min Intensity: -5.63649702
           Name: velodyne
           Position Transformer: XYZ
           Queue Size: 10
           Selectable: true
-          Size (Pixels): 3
+          Size (Pixels): 1
           Size (m): 0.00999999978
           Style: Points
           Topic: /velodyne_points
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
-          Value: false
+          Value: true
         - Class: rviz/Axes
           Enabled: true
           Length: 3
@@ -193,13 +194,13 @@ Visualization Manager:
       Use rainbow: true
       Value: false
     - Class: rviz/MarkerArray
-      Enabled: true
+      Enabled: false
       Marker Topic: /pr/num/vis
       Name: PR_num
       Namespaces:
-        histogram: true
+        {}
       Queue Size: 100
-      Value: true
+      Value: false
     - Class: rviz/Group
       Displays:
         - Alpha: 1
@@ -300,10 +301,18 @@ Visualization Manager:
           Value: true
         - Class: rviz/Marker
           Enabled: true
-          Marker Topic: /pr/estimate_num
-          Name: estimate_number
+          Marker Topic: /pr/most_estimate_num
+          Name: most_num
           Namespaces:
-            {}
+            histogram: true
+          Queue Size: 100
+          Value: true
+        - Class: rviz/MarkerArray
+          Enabled: true
+          Marker Topic: /pr/more_estimate_num/vis
+          Name: more_num
+          Namespaces:
+            histogram: true
           Queue Size: 100
           Value: true
       Enabled: true
@@ -332,21 +341,26 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -1.61000001
-      Class: rviz/TopDownOrtho
+      Class: rviz/ThirdPersonFollower
+      Distance: 140.645218
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 3.54455757
-      Target Frame: map
-      Value: TopDownOrtho (rviz)
-      X: 55.9524689
-      Y: -49.891571
+      Pitch: 0.630398393
+      Target Frame: velodyne
+      Value: ThirdPersonFollower (rviz)
+      Yaw: 1.8853972
     Saved: ~
 Window Geometry:
   Displays:

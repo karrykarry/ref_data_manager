@@ -6,11 +6,11 @@
  *
 */ 
 #include<ros/ros.h>
-#include"itst2scan.hpp"
+#include"itst2data_pub.hpp"
 
 int main(int argc, char* argv[])
 {
-    ros::init(argc, argv, "itst2scan");
+    ros::init(argc, argv, "itst2data_pub");
 	ros::NodeHandle n;
 	ros::NodeHandle priv_nh("~");
 

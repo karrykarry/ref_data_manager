@@ -166,8 +166,8 @@ target_link_libraries(pr2pose
 	${catkin_LIBRARIES}
 )
 
-add_executable(itst2scan node/itst2scan_node.cpp src/itst2scan.cpp)
-target_link_libraries(itst2scan
+add_executable(itst2data_pub node/itst2data_pub_node.cpp src/itst2data_pub.cpp)
+target_link_libraries(itst2data_pub
 	${catkin_LIBRARIES}
 )
 
