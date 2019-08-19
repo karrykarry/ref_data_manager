@@ -9,12 +9,10 @@ Itst2data_pub::Itst2data_pub(ros::NodeHandle n,ros::NodeHandle private_nh_)
 {
 
 	pr_num_vis_pub = n.advertise<visualization_msgs::MarkerArray>("/pr/num/vis", 10, true);
-	more_estimate_num_pub = n.advertise<visualization_msgs::MarkerArray>("/pr/more_estimate_num/vis", 10, true);
-	most_estimate_num_pub = n.advertise<visualization_msgs::Marker>("/pr/most_estimate_num", 10);
+	better_estimate_num_pub = n.advertise<visualization_msgs::MarkerArray>("/pr/better_estimate_num/vis", 10, true);
+	best_estimate_num_pub = n.advertise<visualization_msgs::Marker>("/pr/best_estimate_num", 10);
 	
-	
-	
-	
+	best_image_path_pub = n.advertise<std_msgs::String>("pr/image/path", 10);	//
 	
 	
 	best_score_sub = n.subscribe<std_msgs::Int32>("/score/best", 1, &Itst2data_pub::bestscorecallback, this);
@@ -153,7 +151,7 @@ Itst2data_pub::best_num_vis(const int num){
 
 	color_change(est_num, 1.0, 1.0, 1.0, 1.0);	//white
 	
-	most_estimate_num_pub.publish(est_num);
+	best_estimate_num_pub.publish(est_num);
 }
 
 
@@ -169,10 +167,12 @@ Itst2data_pub::itst2context(const int num){
 	output_file += context_dir; 
 	output_file += oss.str() + ".png";
 
-	std::cout<< output_file << std::endl;
+	std_msgs::String image_path;
+	image_path.data  = output_file;
+	best_image_path_pub.publish(image_path);
 	
 	cv::Mat input_img = cv::imread(output_file,0);
-	cv::imshow("save.png", input_img);
+	cv::imshow("best_estimate_image.png", input_img);
 	cv::waitKey(1);
 
 
@@ -209,7 +209,7 @@ Itst2data_pub::allscorecallback(const std_msgs::Float64MultiArrayConstPtr &msg){
 	double min_score = 1000;	//適当に大きい数字を入れた
 	for(auto score : msg->data){
 		double high_sort_score = 1.0/msg->data[pr_num]; //nth_element は小さい順にsortするから逆数を取った
-		min_score = MIN(min_score, high_sort_score);
+		min_score = MIN_(min_score, high_sort_score);
 		scores.push_back(high_sort_score);
 
 		score2pr_num[high_sort_score] = pr_num;
@@ -217,26 +217,29 @@ Itst2data_pub::allscorecallback(const std_msgs::Float64MultiArrayConstPtr &msg){
 	}
 	
 	std::nth_element(scores.begin(), scores.begin() + num_candidate, scores.end());
-	
+
 	scores.resize(num_candidate);
 
 	visualization_msgs::MarkerArray m_array;
 	visualization_msgs::Marker buffer_m;
-	int rank=1;
+	
+	int id_num=1;
+	
 	for(auto score : scores){
 		if(score != min_score){
 			pr_num = score2pr_num[score]; 	//prの番号を入れる（下のコードが長くなるから）
-			
-			buffer_m = make_vis_marker(pr_poses[pr_num].x, pr_poses[pr_num].y, pr_poses[pr_num].z, pr_num, rank);
+
+			buffer_m = make_vis_marker(pr_poses[pr_num].x, pr_poses[pr_num].y, pr_poses[pr_num].z, pr_num, id_num);
 			color_change(buffer_m, 0.0, 1.0, 0.0, 1.0);	//green
-			
+
 			m_array.markers.push_back(buffer_m);
+			id_num++;
 		}
-		
+
 		// std::cout<<rank<<"位:"<<msg->data[score2pr_num[score]]<<":"<<score2pr_num[score]<<std::endl;
-		rank++;
+		// rank++;
 	}	
-	more_estimate_num_pub.publish(m_array);
-	
+	better_estimate_num_pub.publish(m_array);
+
 	// std::cout<<std::endl;
 }

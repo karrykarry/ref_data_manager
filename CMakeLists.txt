@@ -166,10 +166,23 @@ target_link_libraries(pr2pose
 	${catkin_LIBRARIES}
 )
 
+
+add_executable(pr2savepc src/pr2savepc.cpp)
+target_link_libraries(pr2savepc
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+)
+
+
+
 add_executable(itst2data_pub node/itst2data_pub_node.cpp src/itst2data_pub.cpp)
 target_link_libraries(itst2data_pub
 	${catkin_LIBRARIES}
+	${OpenCV_LIBRARIES}
 )
+
+
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
