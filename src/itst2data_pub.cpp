@@ -157,11 +157,37 @@ Itst2data_pub::best_num_vis(const int num){
 }
 
 
+void
+Itst2data_pub::itst2context(const int num){
+	const std::string context_dir = "/scan_context/mono/";
+	std::ostringstream oss;
+	oss << std::setfill( '0' ) << std::setw( 3 ) << num;
+	
+	std::string output_file;
+	output_file = file_dir; 
+	output_file += file_dir2; 
+	output_file += context_dir; 
+	output_file += oss.str() + ".png";
+
+	std::cout<< output_file << std::endl;
+	
+	cv::Mat input_img = cv::imread(output_file,0);
+	cv::imshow("save.png", input_img);
+	cv::waitKey(1);
+
+
+}
+
+
+
+
+
+
 
 void
 Itst2data_pub::bestscorecallback(const std_msgs::Int32ConstPtr &msg){
 	best_num_vis(msg->data);	
-
+	itst2context(msg->data);
 }
 
 
@@ -198,7 +224,7 @@ Itst2data_pub::allscorecallback(const std_msgs::Float64MultiArrayConstPtr &msg){
 	visualization_msgs::Marker buffer_m;
 	int rank=1;
 	for(auto score : scores){
-		if(score != min_score){ //一番bestscore
+		if(score != min_score){
 			pr_num = score2pr_num[score]; 	//prの番号を入れる（下のコードが長くなるから）
 			
 			buffer_m = make_vis_marker(pr_poses[pr_num].x, pr_poses[pr_num].y, pr_poses[pr_num].z, pr_num, rank);

@@ -26,7 +26,9 @@ class Itst2data_pub{
 
 		std::string file_dir, file_dir2, file_dir3, file_name, file_ext;
 		int num_candidate;
+		template<typename T> T MIN(T val_1, T val_2);
 
+		
 		std::vector <geometry_msgs::Point> pr_poses;
 
 		visualization_msgs::Marker make_vis_marker(const double now_x, const double now_y, const double now_z, const int num, const int id_num);
@@ -37,8 +39,8 @@ class Itst2data_pub{
 		
 		void color_change(visualization_msgs::Marker& color, double r_val, double g_val, double b_val, double a_val);
 		void best_num_vis(const int num);
+		void itst2scan(const int num);
 
-		template<typename T> T MIN(T val_1, T val_2);
 
 	public:
 		Itst2data_pub(ros::NodeHandle n,ros::NodeHandle priv_nh);
