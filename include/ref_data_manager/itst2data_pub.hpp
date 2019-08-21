@@ -21,7 +21,7 @@
 class Itst2data_pub{
 
 	private:
-		ros::Publisher pr_num_vis_pub;
+		ros::Publisher pr_num_pub;
 		ros::Publisher better_estimate_num_pub;
 		ros::Publisher best_estimate_num_pub;
 		ros::Publisher best_image_path_pub;
@@ -31,6 +31,7 @@ class Itst2data_pub{
 
 		std::string file_dir, file_dir2, file_dir3, file_name, file_ext;
 		int num_candidate;
+		bool IMAGE_FLAG;
 		template<typename T> T MIN_(T val_1, T val_2);
 
 		

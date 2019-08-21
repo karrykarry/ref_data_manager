@@ -8,7 +8,7 @@
 Itst2data_pub::Itst2data_pub(ros::NodeHandle n,ros::NodeHandle private_nh_)
 {
 
-	pr_num_vis_pub = n.advertise<visualization_msgs::MarkerArray>("/pr/num/vis", 10, true);
+	pr_num_pub = n.advertise<visualization_msgs::MarkerArray>("/pr/num/vis", 10, true);
 	better_estimate_num_pub = n.advertise<visualization_msgs::MarkerArray>("/pr/better_estimate_num/vis", 10, true);
 	best_estimate_num_pub = n.advertise<visualization_msgs::Marker>("/pr/best_estimate_num", 10);
 	
@@ -26,6 +26,7 @@ Itst2data_pub::Itst2data_pub(ros::NodeHandle n,ros::NodeHandle private_nh_)
 	private_nh_.param("PR_INFO/FILE_EXT", file_ext, {".txt"});
 
 	private_nh_.param("Number_of_candidate", num_candidate, {5});
+	private_nh_.param("IMAGE_FLAG", IMAGE_FLAG, {false});
 
 	pr_list_pub();
 
@@ -46,9 +47,9 @@ Itst2data_pub::make_vis_marker(const double now_x,const double now_y,const doubl
 	m.action = visualization_msgs::Marker::ADD;
 	m.lifetime = ros::Duration(0);
 	// 形
-	m.color.r = 0.5;
-	m.color.g = 0.5;
-	m.color.b = 0.0;
+	m.color.r = 0.0;
+	m.color.g = 0.0;
+	m.color.b = 1.0;
 	m.color.a = 1.0; 
 
 	m.pose.orientation.x = 0.0;
@@ -128,7 +129,7 @@ Itst2data_pub::pr_list_pub(){
 			}
 		}
 	}
-	pr_num_vis_pub.publish(m_array);
+	pr_num_pub.publish(m_array);
 	std::cout<<"------finish "<<PR_list_filename<< "--------"<<std::endl;
 }
 
@@ -170,16 +171,15 @@ Itst2data_pub::itst2context(const int num){
 	std_msgs::String image_path;
 	image_path.data  = output_file;
 	best_image_path_pub.publish(image_path);
-	
-	cv::Mat input_img = cv::imread(output_file,0);
-	cv::imshow("best_estimate_image.png", input_img);
-	cv::waitKey(1);
+
+	if(IMAGE_FLAG){
+		cv::Mat input_img = cv::imread(output_file,0);
+		cv::imshow("best_estimate_image.png", input_img);
+		cv::waitKey(1);
+	}
 
 
 }
-
-
-
 
 
 
@@ -218,9 +218,10 @@ Itst2data_pub::allscorecallback(const std_msgs::Float64MultiArrayConstPtr &msg){
 	
 	std::nth_element(scores.begin(), scores.begin() + num_candidate, scores.end());
 
-	scores.resize(num_candidate);
+	// scores.resize(num_candidate);	//pubの制限
 
-	visualization_msgs::MarkerArray m_array;
+	visualization_msgs::MarkerArray buffer_array;
+	visualization_msgs::MarkerArray remain_array;
 	visualization_msgs::Marker buffer_m;
 	
 	int id_num=1;
@@ -230,16 +231,24 @@ Itst2data_pub::allscorecallback(const std_msgs::Float64MultiArrayConstPtr &msg){
 			pr_num = score2pr_num[score]; 	//prの番号を入れる（下のコードが長くなるから）
 
 			buffer_m = make_vis_marker(pr_poses[pr_num].x, pr_poses[pr_num].y, pr_poses[pr_num].z, pr_num, id_num);
-			color_change(buffer_m, 0.0, 1.0, 0.0, 1.0);	//green
+			if(id_num < num_candidate){	//scoreが上位なもの
+				color_change(buffer_m, 0.0, 1.0, 0.0, 1.0);	//green
 
-			m_array.markers.push_back(buffer_m);
+				buffer_array.markers.push_back(buffer_m);
+			}
+			else {						//scoreが下位なもの
+				color_change(buffer_m, 1.0, 0.0, 0.0, 1.0);	//red
+
+				remain_array.markers.push_back(buffer_m);
+			}
 			id_num++;
 		}
 
 		// std::cout<<rank<<"位:"<<msg->data[score2pr_num[score]]<<":"<<score2pr_num[score]<<std::endl;
 		// rank++;
 	}	
-	better_estimate_num_pub.publish(m_array);
+	better_estimate_num_pub.publish(buffer_array);
+	pr_num_pub.publish(remain_array);
 
 	// std::cout<<std::endl;
 }

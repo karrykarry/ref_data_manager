@@ -5,8 +5,10 @@ ITST_DESC : {
 }
 
 
-SCAN_CONTEXT : {
+CONTEXT : {
+    FILE_DIR : "/home/amsl/Pictures/ros_catkin_ws/ref_data_manager",
+    FILE_DIR2 : "/itst_vs_scan",
+    FILE_DIR3 : "/scan",
     QUERY_IMAGE_FILE : "/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/itst_vs_scan/scan/scan_context_  0_  0_noground.png",
-    SAVE_PATH : "/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/itst_vs_scan/scan/generate_data/scan_context_"
 }
 
