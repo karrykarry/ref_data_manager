@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
+  tf
   visualization_msgs
 )
 
@@ -169,6 +170,12 @@ target_link_libraries(pr2pose
 
 add_executable(pr2savepc src/pr2savepc.cpp)
 target_link_libraries(pr2savepc
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+)
+
+add_executable(trans_pc src/trans_pc.cpp)
+target_link_libraries(trans_pc
 	${catkin_LIBRARIES}
 	${PCL_LIBRARIES}
 )

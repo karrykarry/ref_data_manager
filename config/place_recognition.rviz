@@ -33,6 +33,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Basic1
+        - /Basic1/velodyne1
         - /Basic1/TF1
         - /Basic1/TF1/Frames1
         - /scan_context1
@@ -77,9 +78,9 @@ Visualization Manager:
           Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
-          Max Intensity: 4.12753153
+          Max Intensity: 15.2970448
           Min Color: 0; 0; 0
-          Min Intensity: -2.09698486
+          Min Intensity: -3.18303537
           Name: velodyne
           Position Transformer: XYZ
           Queue Size: 10
@@ -87,7 +88,7 @@ Visualization Manager:
           Size (Pixels): 1
           Size (m): 0.00999999978
           Style: Points
-          Topic: /velodyne_points
+          Topic: /velodyne_points/trans
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
@@ -160,6 +161,8 @@ Visualization Manager:
               Value: true
             map:
               Value: true
+            not_rot_baselink:
+              Value: true
             velodyne:
               Value: true
           Marker Scale: 10
@@ -172,6 +175,8 @@ Visualization Manager:
               gyrodometry:
                 velodyne:
                   {}
+              not_rot_baselink:
+                {}
           Update Interval: 0
           Value: true
         - Class: rviz/MarkerArray
@@ -262,9 +267,9 @@ Visualization Manager:
           Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
-          Max Intensity: 4.23553944
+          Max Intensity: 4.83209991
           Min Color: 0; 0; 0
-          Min Intensity: -2.70352387
+          Min Intensity: -3.00388956
           Name: before_context
           Position Transformer: XYZ
           Queue Size: 10
@@ -355,25 +360,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 28.2006969
+      Distance: 19.8563824
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.3675282
-        Y: -1.01278436
-        Z: 7.62939453e-06
+        X: 55.1799545
+        Y: -36.3605156
+        Z: 1.30000758
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 1.3797965
-      Target Frame: velodyne
+      Pitch: 0.904796064
+      Target Frame: map
       Value: ThirdPersonFollower (rviz)
-      Yaw: 3.23360133
+      Yaw: 1.64859939
     Saved: ~
 Window Geometry:
   Displays:
