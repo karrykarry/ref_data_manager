@@ -187,7 +187,7 @@ Itst2data_pub::itst2context(const int num){
 void
 Itst2data_pub::bestscorecallback(const std_msgs::Int32ConstPtr &msg){
 	best_num_vis(msg->data);	
-	itst2context(msg->data);
+	// itst2context(msg->data);
 }
 
 

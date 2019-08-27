@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+	
+	<node name="trans_pc" pkg="ref_data_manager" type="trans_pc" output="screen" >
+		<param name="PARENT_FRAME" value="/map" />
+		<param name="CHILD_FRAME" value="/not_rot_baselink" />
+		<param name="VELODYNE_FRAME" value="/not_rot_velodyne" />
+		
+		<remap from="/velodyne_points" to="/pr/pc" />
+	</node>
+	
+	<node pkg="tf" type="static_transform_publisher" name="trans_tf_static"
+		args="0 0 1.300 0 0 0 /not_rot_baselink /not_rot_velodyne 100" />
+	
+</launch>
+
+
+

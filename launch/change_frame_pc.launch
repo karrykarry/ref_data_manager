@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+	
+	<node name="change_frame_pc" pkg="ref_data_manager" type="change_frame_pc" output="screen" >
+		
+		<remap from="/velodyne_points" to="/velodyne_obstacles" />
+	</node>
+	
+</launch>
+
+

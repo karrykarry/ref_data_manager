@@ -188,6 +188,10 @@ target_link_libraries(itst2data_pub
 	${OpenCV_LIBRARIES}
 )
 
+add_executable(change_frame_pc src/change_frame_pc.cpp)
+target_link_libraries(change_frame_pc
+	${catkin_LIBRARIES}
+)
 
 
 

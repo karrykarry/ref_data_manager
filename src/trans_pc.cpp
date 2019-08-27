@@ -36,7 +36,7 @@ class Trans_pc{
 
 		pcl::PointCloud<pcl::PointXYZI>::Ptr input_cloud;
 
-		std::string parent_frame, child_frame;
+		std::string PARENT_FRAME, CHILD_FRAME, VELODYNE_FRAME;
 		geometry_msgs::Quaternion buffer_quat;
 		
 		tf::TransformBroadcaster br;
@@ -60,8 +60,9 @@ Trans_pc::Trans_pc(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	
 	odom_sub = n.subscribe("/odometer", 1, &Trans_pc::odomCallback, this);
 
-	parent_frame = "/map";
-	child_frame = "/not_rot_baselink";
+	private_nh_.param("PARENT_FRAME", PARENT_FRAME, {"/map"});
+	private_nh_.param("CHILD_FRAME", CHILD_FRAME, {"/not_rot_baselink"});
+	private_nh_.param("VELODYNE_FRAME", VELODYNE_FRAME, {"/not_rot_velodyne"});
 }
 
 
@@ -84,7 +85,7 @@ Trans_pc::tf_pub(const geometry_msgs::Point &p,const ros::Time& current_time){
 	q.setRPY(0, 0, 0);
     
 	transform.setRotation(q);
-	br.sendTransform(tf::StampedTransform(transform, current_time, parent_frame, child_frame));
+	br.sendTransform(tf::StampedTransform(transform, current_time, PARENT_FRAME, CHILD_FRAME));
 
 }
 
@@ -119,7 +120,8 @@ Trans_pc::lidarCallback(const sensor_msgs::PointCloud2ConstPtr& input)
 
 	pcl::toROSMsg(*transformed_cloud, after_pc);
 	after_pc.header.stamp = input->header.stamp;
-	after_pc.header.frame_id = child_frame;
+	// after_pc.header.frame_id = child_frame;
+	after_pc.header.frame_id = VELODYNE_FRAME;
 	pc_pub.publish(after_pc);
 	
 
@@ -127,10 +129,10 @@ Trans_pc::lidarCallback(const sensor_msgs::PointCloud2ConstPtr& input)
 
 int main (int argc, char** argv)
 {
-	ros::init(argc, argv, "pc2savepc");
+	ros::init(argc, argv, "trans_pc");
 	ros::NodeHandle n;
 	ros::NodeHandle private_nh_("~");
-    ROS_INFO("\033[1;32m---->\033[0m pc2savepc Started.");
+    ROS_INFO("\033[1;32m---->\033[0m trans_pc Started.");
 	
 	Trans_pc trans_pc(n, private_nh_);
 
