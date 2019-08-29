@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+	<node name="test_pc_run" pkg="ref_data_manager" type="test_pc_run" output="screen" >
+		<rosparam file="$(find ref_data_manager)/config/experiment_info.yaml"/>
+
+	</node>
+	
+</launch>
+
+
+
+

@@ -1,0 +1,10 @@
+TEST : {
+    FILE_DIR : "/home/amsl/Pictures/ros_catkin_ws/ref_data_manager",
+    FILE_DIR2 : "/sample",
+    PC_FILE_DIR : "/test_pcd",
+    ODOM_FILE_DIR : "/test_pose",
+    ODOM_LIST : "/list.txt"   
+}
+
+
+

@@ -194,6 +194,17 @@ target_link_libraries(change_frame_pc
 )
 
 
+add_executable(test_pc_save src/test/test_pc_save.cpp)
+target_link_libraries(test_pc_save
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+)
+
+add_executable(test_pc_run node/test_pc_run_node.cpp src/test/test_pc_run.cpp)
+target_link_libraries(test_pc_run
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
