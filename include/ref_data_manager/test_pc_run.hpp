@@ -33,14 +33,25 @@ class Test_pc_run{
 		std::vector<std::string> split(const std::string &str, char sep);
 		void pr_list_pub();
 
+		int file_count;
+		int pose_true_cnt, yaw_true_cnt, all_true_cnt;
+
+		bool diff_pose(const geometry_msgs::Pose est_pose);
+		bool diff_yaw(const double yaw1, const double yaw2);
+	
 	public:
 		Test_pc_run(ros::NodeHandle n,ros::NodeHandle priv_nh);
 		~Test_pc_run();
 
-		bool callback_flag;
 		void pc_publisher(const int num);
 		void poseCallback(const geometry_msgs::PoseConstPtr &msg);
 
+		double deg2rad(const double yaw_){
+			double yaw = yaw_;
+			while(yaw >= M_PI) yaw -= 2.0*M_PI;
+			while(yaw <= -M_PI) yaw += 2.0*M_PI;
+			return yaw;
+		}
 };
 
 #endif

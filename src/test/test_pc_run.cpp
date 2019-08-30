@@ -12,7 +12,8 @@
 #include"test_pc_run.hpp"
 
 Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
-	callback_flag(true)
+	file_count(140),
+	pose_true_cnt(0), yaw_true_cnt(0), all_true_cnt(0)
 {
 	pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points", 10);
 	
@@ -32,7 +33,15 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 }
 
 Test_pc_run::~Test_pc_run(){
-	
+	std::cout << "\033[1;31m"<<
+		"Result pose_ok:" << pose_true_cnt << 
+		", yaw_ok:" << yaw_true_cnt << 
+		", all_ok:" << all_true_cnt << 
+		", file_sum:" << file_count <<"\033[0m" << std::endl; 
+
+
+		std::cout<<std::endl;
+		std::cout<<std::endl;
 }
 
 std::vector<std::string> 
@@ -76,12 +85,15 @@ Test_pc_run::pr_list_pub(){
 		std::getline(reading_file, reading_line_buffer);
 		if(!reading_line_buffer.empty()){
 			v = split(reading_line_buffer,',');
-			std::cout<<atof(v[0].c_str())<<","<<atof(v[1].c_str())<<","<<atof(v[2].c_str())<<std::endl;
+			// std::cout<<atof(v[0].c_str())<<","<<atof(v[1].c_str())<<","<<atof(v[2].c_str())<<std::endl;
+			std::cout<<atof(v[0].c_str())<<","<<atof(v[1].c_str())<<","<<atof(v[5].c_str())<<std::endl;
 
 			geometry_msgs::Point pr_pose;
 			pr_pose.x = atof(v[0].c_str());
 			pr_pose.y = atof(v[1].c_str());
-			pr_pose.z = atof(v[2].c_str());
+			
+			// z:2 roll:3 pitch:4 yaw:5
+			pr_pose.z = atof(v[5].c_str());	//yaw
 
 			pr_poses.push_back(pr_pose);
 		}
@@ -113,14 +125,83 @@ Test_pc_run::pc_publisher(const int num){
 
 }
 
+
+bool
+Test_pc_run::diff_pose(const geometry_msgs::Pose est_pose){
+	bool result_flag = false;
+
+	std::cout << 
+		"estimate(x, y): " << est_pose.position.x << "," << est_pose.position.y << 
+		
+		"  odometry(x, y): " << pr_poses[file_count].x << "," << pr_poses[file_count].y <<std::endl;
+	
+
+	if( (fabs(est_pose.position.x - pr_poses[file_count].x) < 0.5) 
+			&& (fabs(est_pose.position.y - pr_poses[file_count].y) < 0.5) ) result_flag = true;
+
+	else std::cout<<"\033[1;31m"<<std::flush;
+		
+	std::cout<< "Diffrence(x, y):" << est_pose.position.x - pr_poses[file_count].x << ","
+		<< est_pose.position.y - pr_poses[file_count].y << "\033[0m" << std::endl;
+
+	return result_flag;
+}
+
+
+
+bool
+Test_pc_run::diff_yaw(const double yaw1,const double yaw2){
+	bool result_flag = false;
+	
+	double x_ = cos(yaw2) * cos(yaw1) + sin(yaw2) * sin(yaw1);
+	double y_ = (-1) * sin(yaw2) * cos(yaw1) + cos(yaw2) * sin(yaw1);
+
+	if(fabs(atan2(y_, x_) * 180.0 / M_PI) <= 6.0) result_flag = true;
+	
+	else std::cout<<"\033[1;31m"<<std::flush;
+	
+	std::cout<<"diff_theta: "<< fabs(atan2(y_, x_) * 180.0 / M_PI) << "[deg]\033[0m" <<std::endl;
+	
+	return result_flag;
+}
+
+
 void 
 Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
-	
-	static int count = 0;
 
-	std::cout << "--call_back now--" <<std::endl;
+	static bool is_start = false;
+	if(is_start){
+		std::cout << "File_Number: " << file_count << std::endl;
 
+		bool pose_flag = diff_pose(*msg);
 
-	callback_flag = true;
+		double est_yaw, odo_yaw;
+		est_yaw = deg2rad(msg->orientation.z);
+		odo_yaw = deg2rad(pr_poses[file_count].z);
+
+		std::cout<<"estimate(yaw): "<< est_yaw <<"[deg]"<<"  odometry(yaw): "<< odo_yaw <<"[deg]"<<std::endl;
+		bool yaw_flag = diff_yaw(est_yaw, odo_yaw);
+
+		if(pose_flag){
+			std::cout<<"pose : OK, "<<std::flush;
+			pose_true_cnt++;
+		}
+		else std::cout<<"pose : NG, "<<std::flush;
+
+		if(yaw_flag){
+			std::cout<<"yaw : OK"<<std::endl;
+			yaw_true_cnt++;
+		}
+
+		else std::cout<<"yaw : NG"<<std::endl;
+
+		if(pose_flag && yaw_flag) all_true_cnt++;
+
+		file_count++;
+		std::cout<<std::endl;
+
+	}
+	pc_publisher(file_count);
+	is_start = true;
 }
 

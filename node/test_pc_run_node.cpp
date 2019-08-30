@@ -22,15 +22,21 @@ int main(int argc, char* argv[])
 		
 	static int count = 0;
     
-	while(ros::ok()){
-		if(test_pc_run.callback_flag){
-			test_pc_run.pc_publisher(count);	
-			count++;
-			// test_pc_run.callback_flag = false;
-		}
-		ros::spinOnce();
-        loop_rate.sleep();
-    }   
+	// while(ros::ok()){
+	// 	if(test_pc_run.callback_flag){
+	// 		test_pc_run.pc_publisher(count);	
+	// 		count++;
+	// 		// std:: cout << "test" << std::endl;
+	// 		// test_pc_run.callback_flag = false;
+	// 		// std:: cout << "test" << std::endl;
+	// 	}
+	// 	ros::spinOnce();
+    //     loop_rate.sleep();
+    // }
+
+
+	ros::spin();
+
 
     return 0;
 }
