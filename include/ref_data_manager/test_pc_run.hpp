@@ -33,6 +33,13 @@ class Test_pc_run{
 		std::vector<std::string> split(const std::string &str, char sep);
 		void pr_list_pub();
 
+
+		std::ofstream writing_file;
+		std::vector<double> diff_x;
+		std::vector<double> diff_y;
+		std::vector<double> diff_theta;
+
+
 		int file_count;
 		int pose_true_cnt, yaw_true_cnt, all_true_cnt;
 

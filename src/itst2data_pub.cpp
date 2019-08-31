@@ -47,9 +47,9 @@ Itst2data_pub::make_vis_marker(const double now_x,const double now_y,const doubl
 	m.action = visualization_msgs::Marker::ADD;
 	m.lifetime = ros::Duration(0);
 	// 形
-	m.color.r = 0.0;
-	m.color.g = 0.0;
-	m.color.b = 1.0;
+	m.color.r = 1.0;
+	m.color.g = 1.0;
+	m.color.b = 0.0;
 	m.color.a = 1.0; 
 
 	m.pose.orientation.x = 0.0;
@@ -237,7 +237,7 @@ Itst2data_pub::allscorecallback(const std_msgs::Float64MultiArrayConstPtr &msg){
 				buffer_array.markers.push_back(buffer_m);
 			}
 			else {						//scoreが下位なもの
-				color_change(buffer_m, 1.0, 0.0, 0.0, 1.0);	//red
+				color_change(buffer_m, 1.0, 1.0, 0.0, 1.0);	//red
 
 				remain_array.markers.push_back(buffer_m);
 			}

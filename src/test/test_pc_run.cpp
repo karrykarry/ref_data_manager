@@ -12,7 +12,7 @@
 #include"test_pc_run.hpp"
 
 Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
-	file_count(140),
+	file_count(0),
 	pose_true_cnt(0), yaw_true_cnt(0), all_true_cnt(0)
 {
 	pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points", 10);
@@ -30,6 +30,11 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	pc_file_name = file_dir;
 	pc_file_name += file_dir2;
 	pc_file_name += pc_file_dir;
+
+
+
+	writing_file.open("/home/amsl/m2_result/context.csv", std::ios::out);
+
 }
 
 Test_pc_run::~Test_pc_run(){
@@ -39,9 +44,22 @@ Test_pc_run::~Test_pc_run(){
 		", all_ok:" << all_true_cnt << 
 		", file_sum:" << file_count <<"\033[0m" << std::endl; 
 
+		
+	std::cout<<"----save now----"<<std::endl;
+	for(auto xx : diff_x){
+		writing_file << xx <<"," <<std::flush;
+	}
+	writing_file <<std::endl;
+	for(auto yy : diff_y){
+		writing_file << yy <<"," <<std::flush;
+	}
+	writing_file <<std::endl;
+	for(auto theta : diff_theta){
+		writing_file << theta <<"," <<std::flush;
+	}
 
-		std::cout<<std::endl;
-		std::cout<<std::endl;
+	std::cout<<std::endl;
+	std::cout<<std::endl;
 }
 
 std::vector<std::string> 
@@ -144,6 +162,9 @@ Test_pc_run::diff_pose(const geometry_msgs::Pose est_pose){
 	std::cout<< "Diffrence(x, y):" << est_pose.position.x - pr_poses[file_count].x << ","
 		<< est_pose.position.y - pr_poses[file_count].y << "\033[0m" << std::endl;
 
+	diff_x.push_back(fabs(est_pose.position.x - pr_poses[file_count].x));
+	diff_y.push_back(fabs(est_pose.position.y - pr_poses[file_count].y));
+
 	return result_flag;
 }
 
@@ -161,6 +182,8 @@ Test_pc_run::diff_yaw(const double yaw1,const double yaw2){
 	else std::cout<<"\033[1;31m"<<std::flush;
 	
 	std::cout<<"diff_theta: "<< fabs(atan2(y_, x_) * 180.0 / M_PI) << "[deg]\033[0m" <<std::endl;
+
+	diff_theta.push_back(fabs(atan2(y_, x_) * 180.0 / M_PI));
 	
 	return result_flag;
 }
