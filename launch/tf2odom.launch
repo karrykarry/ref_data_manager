@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+	
+	<node name="tf2odom" pkg="ref_data_manager" type="tf2odom" output="screen" >
+		<param name="PARENT_FRAME" value="/map" />
+		<param name="CHILD_FRAME" value="/base_link" />
+	</node>
+	
+</launch>
+
+
+
+

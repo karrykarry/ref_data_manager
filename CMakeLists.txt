@@ -180,6 +180,10 @@ target_link_libraries(trans_pc
 	${PCL_LIBRARIES}
 )
 
+add_executable(tf2odom src/tf2odom.cpp)
+target_link_libraries(tf2odom
+	${catkin_LIBRARIES}
+)
 
 
 add_executable(itst2data_pub node/itst2data_pub_node.cpp src/itst2data_pub.cpp)
