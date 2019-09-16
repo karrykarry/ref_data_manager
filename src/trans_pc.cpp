@@ -1,5 +1,5 @@
 //
-// 引数にくっつけたいpcdを取る
+// map座標系で見たvelodyneをpublishする
 //
 
 #include <stdio.h>

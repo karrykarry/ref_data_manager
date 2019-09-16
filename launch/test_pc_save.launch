@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <launch>
 
-	<node name="save_pc_heightmap" pkg="velodyne_height_map" type="heightmap_node">
-		<param name="cell_size" value="0.2"/>
-		<param name="full_clouds" value="true"/>
-		<param name="grid_dimensions" value="500"/>
-		<param name="height_threshold" value="0.15"/>
-		
-		<remap from="/velodyne_obstacles" to="/velodyne_obstacles/test" />
-	</node>
+	<!-- <node name="test_save_pc_heightmap" pkg="velodyne_height_map" type="heightmap_node"> -->
+	<!-- 	<param name="cell_size" value="0.2"/> -->
+	<!-- 	<param name="full_clouds" value="true"/> -->
+	<!-- 	<param name="grid_dimensions" value="500"/> -->
+	<!-- 	<param name="height_threshold" value="0.15"/> -->
+	<!-- 	 -->
+	<!-- 	<remap from="/velodyne_obstacles" to="/velodyne_obstacles/test" /> -->
+	<!-- </node> -->
 
 	
 	<node name="test_pc_save" pkg="ref_data_manager" type="test_pc_save" output="screen" >
@@ -16,7 +16,7 @@
 		<param name="SKIP_TIME" value="10" />
 
 
-		<remap from="/velodyne_obstacles" to="/velodyne_obstacles/test" />
+		<!-- <remap from="/velodyne_points" to="/velodyne_obstacles/test" /> -->
 	</node>
 	
 </launch>

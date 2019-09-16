@@ -7,6 +7,7 @@
 		<param name="VELODYNE_FRAME" value="/not_rot_velodyne" />
 		
 		<remap from="/velodyne_points" to="/pr/pc" />
+		<remap from="/velodyne_points/trans" to="/velodyne_obstacles/trans" />
 	</node>
 	
 	<node pkg="tf" type="static_transform_publisher" name="trans_tf_static"
