@@ -16,6 +16,7 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	pose_true_cnt(0), yaw_true_cnt(0), all_true_cnt(0)
 {
 	pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points", 10);
+	test_pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points/test", 10);
 	
 	pose_sub = n.subscribe<geometry_msgs::Pose>("/map2context_result", 1, &Test_pc_run::poseCallback, this);
 
@@ -121,7 +122,7 @@ Test_pc_run::pr_list_pub(){
 
 
 void
-Test_pc_run::pc_publisher(const int num){
+Test_pc_run::pc_publisher(ros::Publisher pub,const int num){
 	std::ostringstream oss;
 	oss << std::setfill( '0' ) << std::setw( 4 ) << num;
 
@@ -137,9 +138,9 @@ Test_pc_run::pc_publisher(const int num){
 	sensor_msgs::PointCloud2 pc;
 	pcl::toROSMsg(*cloud_IN, pc);
 
-	pc.header.frame_id  = "/map";	
+	pc.header.frame_id  = "/context_estimate";	
 	pc.header.stamp  = ros::Time(0);
-	pc_pub.publish(pc);
+	pub.publish(pc);
 
 }
 
@@ -219,12 +220,14 @@ Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
 		else std::cout<<"yaw : NG"<<std::endl;
 
 		if(pose_flag && yaw_flag) all_true_cnt++;
+	
+		pc_publisher(test_pc_pub, file_count);
 
 		file_count++;
 		std::cout<<std::endl;
 
 	}
-	pc_publisher(file_count);
+	pc_publisher(pc_pub, file_count);
 	is_start = true;
 }
 

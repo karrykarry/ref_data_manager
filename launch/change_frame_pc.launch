@@ -2,7 +2,9 @@
 <launch>
 	
 	<node name="change_frame_pc" pkg="ref_data_manager" type="change_frame_pc" output="screen" >
-		
+
+		<param name="header_frame" value="/context_estimate_velodyne" />
+			
 		<remap from="/velodyne_points" to="/velodyne_obstacles" />
 	</node>
 	

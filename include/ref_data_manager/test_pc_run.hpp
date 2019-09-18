@@ -23,6 +23,7 @@ class Test_pc_run{
 
 	private:
 		ros::Publisher pc_pub;
+		ros::Publisher test_pc_pub;
 		ros::Subscriber pose_sub;
 
 		std::string file_dir, file_dir2, pc_file_dir, odom_file_dir, odom_list;
@@ -50,7 +51,7 @@ class Test_pc_run{
 		Test_pc_run(ros::NodeHandle n,ros::NodeHandle priv_nh);
 		~Test_pc_run();
 
-		void pc_publisher(const int num);
+		void pc_publisher(ros::Publisher pub, const int num);
 		void poseCallback(const geometry_msgs::PoseConstPtr &msg);
 
 		double deg2rad(const double yaw_){
