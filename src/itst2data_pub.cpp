@@ -129,6 +129,7 @@ Itst2data_pub::pr_list_pub(){
 			}
 		}
 	}
+	pr_num_ = num;
 	pr_num_pub.publish(m_array);
 	std::cout<<"------finish "<<PR_list_filename<< "--------"<<std::endl;
 }
@@ -186,8 +187,25 @@ Itst2data_pub::itst2context(const int num){
 
 void
 Itst2data_pub::bestscorecallback(const std_msgs::Int32ConstPtr &msg){
-	best_num_vis(msg->data);	
+	
+	visualization_msgs::MarkerArray remain_array;
+	visualization_msgs::Marker buffer_m;
+	
+	for(int i=0;i<=pr_num_;i++){
+		if(i==msg->data){
+			best_num_vis(msg->data);
+			continue;
+		}
+		buffer_m = make_vis_marker(pr_poses[i].x, pr_poses[i].y, pr_poses[i].z, i, i);
+		
+		color_change(buffer_m, 1.0, 1.0, 0.0, 1.0);	//red
+		remain_array.markers.push_back(buffer_m);
+	}
+	
 	// itst2context(msg->data);
+
+
+	pr_num_pub.publish(remain_array);
 }
 
 

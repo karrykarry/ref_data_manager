@@ -33,6 +33,7 @@ class Itst2data_pub{
 		int num_candidate;
 		bool IMAGE_FLAG;
 		template<typename T> T MIN_(T val_1, T val_2);
+		int pr_num_;
 
 		
 		std::vector <geometry_msgs::Point> pr_poses;

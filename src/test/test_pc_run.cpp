@@ -88,14 +88,15 @@ Test_pc_run::pr_list_pub(){
 	std::string reading_line_buffer;
 
 	reading_file.open(PR_list_filename, std::ios::in);
-	
-	if (reading_file.fail()) {
-		std::cout<<"\033[1;32m File could not be opened "<< PR_list_filename << "\033[0m"<<std::endl;
+
+	if(reading_file.fail()) {
+		this->~Test_pc_run();
+		std::cerr<<"\033[1;32m File could not be opened "<< PR_list_filename << "\033[0m"<<std::endl;
 		exit(1);
 	}
-	
-	std::vector<std::string> v;
-		
+
+
+	std::vector<std::string> v;	
 	std::cout<<"------read "<<PR_list_filename<< "--------"<<std::endl;
 	
 	while (!reading_file.eof())
@@ -131,7 +132,8 @@ Test_pc_run::pc_publisher(ros::Publisher pub,const int num){
 
 	pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_IN (new pcl::PointCloud<pcl::PointXYZI>);
 	if( pcl::io::loadPCDFile<pcl::PointXYZI>(pcd_name,*cloud_IN) == -1 ){
-		std::cout << "load error !!"<<std::endl;;
+		std::cerr << "pcd load error !!"<<std::endl;;
+		this->~Test_pc_run();
 		exit(1);
 	}
 	
@@ -225,7 +227,6 @@ Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
 
 		file_count++;
 		std::cout<<std::endl;
-
 	}
 	pc_publisher(pc_pub, file_count);
 	is_start = true;
