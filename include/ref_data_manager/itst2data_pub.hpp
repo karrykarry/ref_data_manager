@@ -8,6 +8,7 @@
 
 #include<ros/ros.h>
 #include<std_msgs/Int32.h>
+#include<std_msgs/Int32MultiArray.h>
 #include<std_msgs/Float64MultiArray.h>
 #include<std_msgs/String.h>
 // #include<nav_msgs/Odometry.h>
@@ -27,6 +28,7 @@ class Itst2data_pub{
 		ros::Publisher best_image_path_pub;
 		
 		ros::Subscriber best_score_sub;
+		ros::Subscriber better_score_sub;
 		ros::Subscriber all_score_sub;
 
 		std::string file_dir, file_dir2, file_dir3, file_name, file_ext;
@@ -54,6 +56,7 @@ class Itst2data_pub{
 		~Itst2data_pub();
 
 		void bestscorecallback(const std_msgs::Int32ConstPtr &msg);
+		void betterscorecallback(const std_msgs::Int32MultiArrayConstPtr &msgs);
 		void allscorecallback(const std_msgs::Float64MultiArrayConstPtr &msg);
 
 };

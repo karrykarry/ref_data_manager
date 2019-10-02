@@ -9,13 +9,14 @@ Itst2data_pub::Itst2data_pub(ros::NodeHandle n,ros::NodeHandle private_nh_)
 {
 
 	pr_num_pub = n.advertise<visualization_msgs::MarkerArray>("/pr/num/vis", 10, true);
-	better_estimate_num_pub = n.advertise<visualization_msgs::MarkerArray>("/pr/better_estimate_num/vis", 10, true);
+	better_estimate_num_pub = n.advertise<visualization_msgs::MarkerArray>("/pr/better_estimate_num/vis", 10);
 	best_estimate_num_pub = n.advertise<visualization_msgs::Marker>("/pr/best_estimate_num", 10);
 	
 	best_image_path_pub = n.advertise<std_msgs::String>("pr/image/path", 10);	//
 	
 	
 	best_score_sub = n.subscribe<std_msgs::Int32>("/score/best", 1, &Itst2data_pub::bestscorecallback, this);
+	better_score_sub = n.subscribe<std_msgs::Int32MultiArray>("/score/better", 1, &Itst2data_pub::betterscorecallback, this);
 	all_score_sub = n.subscribe<std_msgs::Float64MultiArray>("/score/vis", 1, &Itst2data_pub::allscorecallback, this);
 	
 	
@@ -47,7 +48,7 @@ Itst2data_pub::make_vis_marker(const double now_x,const double now_y,const doubl
 	m.action = visualization_msgs::Marker::ADD;
 	m.lifetime = ros::Duration(0);
 	// 形
-	m.color.r = 1.0;
+	m.color.r = 0.0;
 	m.color.g = 1.0;
 	m.color.b = 0.0;
 	m.color.a = 1.0; 
@@ -188,28 +189,50 @@ Itst2data_pub::itst2context(const int num){
 void
 Itst2data_pub::bestscorecallback(const std_msgs::Int32ConstPtr &msg){
 	
-	visualization_msgs::MarkerArray remain_array;
-	visualization_msgs::Marker buffer_m;
+	best_num_vis(msg->data);
 	
-	for(int i=0;i<=pr_num_;i++){
-		if(i==msg->data){
-			best_num_vis(msg->data);
-			continue;
+}
+
+void 
+Itst2data_pub::betterscorecallback(const std_msgs::Int32MultiArrayConstPtr &msgs){
+
+	std::vector<bool> flag(pr_num_, false);
+
+	visualization_msgs::MarkerArray better_array;
+	visualization_msgs::MarkerArray remain_array;
+	visualization_msgs::Marker num_m;
+
+	int cnt_=0;
+	for(auto msg : msgs->data){
+		int num = msg;
+		if(!flag[num]){
+			num_m = make_vis_marker(pr_poses[num].x, pr_poses[num].y, pr_poses[num].z, num, cnt_);
+			cnt_++;
+
+			color_change(num_m, 1.0, 0.0, 0.0, 1.0);	//red
+			better_array.markers.push_back(num_m);
+			flag[num]=true;
 		}
-		buffer_m = make_vis_marker(pr_poses[i].x, pr_poses[i].y, pr_poses[i].z, i, i);
-		
-		color_change(buffer_m, 1.0, 1.0, 0.0, 1.0);	//red
-		remain_array.markers.push_back(buffer_m);
 	}
 	
+	better_estimate_num_pub.publish(better_array);
+	
 	// itst2context(msg->data);
+	
+	cnt_=0;
+	for(int i=0;i<=pr_num_;i++){
+		if(flag[i]) continue;
+		num_m = make_vis_marker(pr_poses[i].x, pr_poses[i].y, pr_poses[i].z, i, cnt_);
+		cnt_++;
+		
+		color_change(num_m, 0.0, 1.0, 0.0, 1.0);	//green
+		remain_array.markers.push_back(num_m);
+	}
 
 
 	pr_num_pub.publish(remain_array);
+
 }
-
-
-
 
 
 
