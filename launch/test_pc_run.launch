@@ -1,8 +1,13 @@
 <?xml version="1.0"?>
 <launch>
+
+
+	<arg name="is_dataset"/>
+
+
 	<node name="test_pc_run" pkg="ref_data_manager" type="test_pc_run" output="screen" >
 		<rosparam file="$(find ref_data_manager)/config/experiment_info.yaml"/>
-
+		<param name="IS_DATASET" value="$(arg is_dataset)" />
 	</node>
 	
 </launch>

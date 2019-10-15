@@ -7,24 +7,32 @@
  * ~/data/bagfiles/infant$ rosbag play 2018-09-09-16-33-11.bag --clock -s 15 
  * でvelodyne_pointsを使わない用にする
  *
+ * pf_scoreの画像のdataset用を集めるソースコードも兼ねている
+ * IS_DATASETの場所が変更点
  */
 
 #include"test_pc_run.hpp"
 
 Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
-	file_count(0),
-	pose_true_cnt(0), yaw_true_cnt(0), all_true_cnt(0)
+	file_count(-1),
+	pose_true_cnt(0), yaw_true_cnt(0), all_true_cnt(0),
+	nx_flag(true)
 {
 	pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points", 10);
+	score_pub = n.advertise<std_msgs::Int32>("/score/process", 10);
 	test_pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points/test", 10);
+	recover_pub = n.advertise<std_msgs::Empty>("/process", 10);
 	
 	pose_sub = n.subscribe<geometry_msgs::Pose>("/map2context_result", 1, &Test_pc_run::poseCallback, this);
+	flag_sub = n.subscribe<std_msgs::Bool>("/next_pcd", 1, &Test_pc_run::flagCallback, this);
 
 	private_nh_.param("TEST/FILE_DIR", file_dir, {"/home/amsl/Pictures/ros_catkin_ws/ref_data_manager"});
 	private_nh_.param("TEST/FILE_DIR2", file_dir2, {"/sample"});
 	private_nh_.param("TEST/PC_FILE_DIR", pc_file_dir, {"/test_pcd"});
 	private_nh_.param("TEST/ODOM_FILE_DIR", odom_file_dir, {"/test_pose"});
 	private_nh_.param("TEST/ODOM_LIST", odom_list, {"/list.txt"});
+	
+	private_nh_.param("IS_DATASET", IS_DATASET, {false});
 
 	pr_list_pub();
 	
@@ -33,8 +41,8 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	pc_file_name += pc_file_dir;
 
 
-
 	writing_file.open("/home/amsl/m2_result/context.csv", std::ios::out);
+ 	ROS_INFO_STREAM("\033[1;32mAre we in dataset mode? :" << IS_DATASET<<"\033[0m");
 
 }
 
@@ -158,15 +166,28 @@ Test_pc_run::diff_pose(const geometry_msgs::Pose est_pose){
 	
 
 	if( (fabs(est_pose.position.x - pr_poses[file_count].x) < 0.5) 
-			&& (fabs(est_pose.position.y - pr_poses[file_count].y) < 0.5) ) result_flag = true;
+			&& (fabs(est_pose.position.y - pr_poses[file_count].y) < 0.5) ){
+		result_flag = true;
+		score.data = 0;
+	}
 
-	else std::cout<<"\033[1;31m"<<std::flush;
+	else{
+		std::cout<<"\033[1;31m"<<std::flush;
+		
+		if( (fabs(est_pose.position.x - pr_poses[file_count].x) < 5) 
+				&& (fabs(est_pose.position.y - pr_poses[file_count].y) < 5) ){
+			score.data = 1;
+		}
+		else score.data = 2;
+	}
 		
 	std::cout<< "Diffrence(x, y):" << est_pose.position.x - pr_poses[file_count].x << ","
 		<< est_pose.position.y - pr_poses[file_count].y << "\033[0m" << std::endl;
 
-	diff_x.push_back(fabs(est_pose.position.x - pr_poses[file_count].x));
-	diff_y.push_back(fabs(est_pose.position.y - pr_poses[file_count].y));
+	if(!IS_DATASET){
+		diff_x.push_back(fabs(est_pose.position.x - pr_poses[file_count].x));
+		diff_y.push_back(fabs(est_pose.position.y - pr_poses[file_count].y));
+	}
 
 	return result_flag;
 }
@@ -186,7 +207,7 @@ Test_pc_run::diff_yaw(const double yaw1,const double yaw2){
 	
 	std::cout<<"diff_theta: "<< fabs(atan2(y_, x_) * 180.0 / M_PI) << "[deg]\033[0m" <<std::endl;
 
-	diff_theta.push_back(fabs(atan2(y_, x_) * 180.0 / M_PI));
+	if(!IS_DATASET) diff_theta.push_back(fabs(atan2(y_, x_) * 180.0 / M_PI));
 	
 	return result_flag;
 }
@@ -195,40 +216,75 @@ Test_pc_run::diff_yaw(const double yaw1,const double yaw2){
 void 
 Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
 
-	static bool is_start = false;
-	if(is_start){
-		std::cout << "File_Number: " << file_count << std::endl;
+	std::cout << "File_Number: " << file_count << std::endl;
 
-		bool pose_flag = diff_pose(*msg);
+	bool pose_flag = diff_pose(*msg);
 
-		double est_yaw, odo_yaw;
-		est_yaw = deg2rad(msg->orientation.z);
-		odo_yaw = deg2rad(pr_poses[file_count].z);
+	double est_yaw, odo_yaw;
+	est_yaw = deg2rad(msg->orientation.z);
+	odo_yaw = deg2rad(pr_poses[file_count].z);
 
-		std::cout<<"estimate(yaw): "<< est_yaw <<"[deg]"<<"  odometry(yaw): "<< odo_yaw <<"[deg]"<<std::endl;
-		bool yaw_flag = diff_yaw(est_yaw, odo_yaw);
+	std::cout<<"estimate(yaw): "<< est_yaw <<"[deg]"<<"  odometry(yaw): "<< odo_yaw <<"[deg]"<<std::endl;
+	bool yaw_flag = diff_yaw(est_yaw, odo_yaw);
 
-		if(pose_flag){
-			std::cout<<"pose : OK, "<<std::flush;
-			pose_true_cnt++;
-		}
-		else std::cout<<"pose : NG, "<<std::flush;
+	if(pose_flag){
+		std::cout<<"pose : OK, "<<std::flush;
+		pose_true_cnt++;
+	}
+	else std::cout<<"pose : NG, "<<std::flush;
 
-		if(yaw_flag){
-			std::cout<<"yaw : OK"<<std::endl;
-			yaw_true_cnt++;
-		}
+	if(yaw_flag){
+		std::cout<<"yaw : OK"<<std::endl;
+		yaw_true_cnt++;
+	}
 
-		else std::cout<<"yaw : NG"<<std::endl;
+	else std::cout<<"yaw : NG"<<std::endl;
 
-		if(pose_flag && yaw_flag) all_true_cnt++;
-	
-		pc_publisher(test_pc_pub, file_count);
+	if(pose_flag && yaw_flag) all_true_cnt++;
 
+	pc_publisher(test_pc_pub, file_count);
+
+
+
+	// 	file_count++;
+	// 	std::cout<<std::endl;
+
+
+	// if(nx_flag) pc_publisher(pc_pub, file_count);
+	if(!IS_DATASET){
+		pc_publisher(pc_pub, file_count);
 		file_count++;
 		std::cout<<std::endl;
 	}
+	
+	else{
+		score_pub.publish(score);
+		std::cout<<"save ->"<< score.data <<std::endl;	
+		std::cout<<"\033[1;32mrecover pub\033[0m" <<std::endl;
+		std_msgs::Empty em;
+		recover_pub.publish(em);
+	}
+	// }
+	nx_flag = false;
+	std::cout<<std::endl;
+}
+
+
+////// imageをつくるため/////////
+
+
+
+void 
+Test_pc_run::flagCallback(const std_msgs::BoolConstPtr &msg){
+	
+	file_count++;
+	std::cout<<std::endl;	
+	std::cout<<"###########################"<<std::endl;	
+	std::cout << "File_Number: " << file_count << "publish" << std::endl;
 	pc_publisher(pc_pub, file_count);
-	is_start = true;
+	pc_publisher(test_pc_pub, file_count);
+
+	nx_flag = msg->data;
+
 }
 

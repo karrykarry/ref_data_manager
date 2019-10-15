@@ -196,6 +196,10 @@ Itst2data_pub::bestscorecallback(const std_msgs::Int32ConstPtr &msg){
 void 
 Itst2data_pub::betterscorecallback(const std_msgs::Int32MultiArrayConstPtr &msgs){
 
+	std_msgs::Int32MultiArray better_scores = *msgs;
+
+	better_scores.data.erase(better_scores.data.begin());// 一番scoreが高いもの(best)を削除
+
 	std::vector<bool> flag(pr_num_, false);
 
 	visualization_msgs::MarkerArray better_array;

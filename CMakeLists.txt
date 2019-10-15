@@ -216,6 +216,13 @@ target_link_libraries(test_pc_only_save
 	${PCL_LIBRARIES}
 )
 
+add_executable(test_pc_only_run src/test/test_pc_only_run.cpp)
+target_link_libraries(test_pc_only_run
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+)
+
+
 add_executable(raycasting node/raycasting_node.cpp src/raycasting.cpp)
 target_link_libraries(raycasting
 	${catkin_LIBRARIES}

@@ -35,7 +35,6 @@ class Test_pc_save{
 		
 	public:
 		Test_pc_save(ros::NodeHandle n, ros::NodeHandle private_nh_);
-		~Test_pc_save();
 		
 		void lidarCallback(const sensor_msgs::PointCloud2ConstPtr& input);
 };
@@ -60,14 +59,6 @@ Test_pc_save::Test_pc_save(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	writing_file.open(pc_time_name, std::ios::out);
 }
 
-Test_pc_save::~Test_pc_save(){
-
-	std::cout << "\033[1;31m save --> " << pc_time_name << "\033[0m" << std::endl;
-
-	for(auto time : times){
-		writing_file << time << std::endl;
-	}
-}
 
 
 void 
@@ -92,7 +83,7 @@ Test_pc_save::lidarCallback(const sensor_msgs::PointCloud2ConstPtr& input)
 		pcl::io::savePCDFile(pcd_name, *input_cloud);
 
 		// times.push_back((double)input->header.stamp.nsec*1.0e-9 + input->header.stamp.sec);
-		writing_file << (double)input->header.stamp.nsec*1.0e-9 + (double)input->header.stamp.sec << std::endl;;
+		writing_file <<  input->header.stamp << std::endl;
 		
 		count = 0;
 	}
