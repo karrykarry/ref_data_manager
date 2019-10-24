@@ -212,7 +212,7 @@ Test_pc_run::diff_yaw(const double yaw1,const double yaw2){
 	return result_flag;
 }
 
-
+//file_count の順番に気をつける
 void 
 Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
 
@@ -252,8 +252,10 @@ Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
 
 	// if(nx_flag) pc_publisher(pc_pub, file_count);
 	if(!IS_DATASET){
-		pc_publisher(pc_pub, file_count);
 		file_count++;
+		std::cout<<"###########################"<<std::endl;	
+		std::cout << "File_Number: " << file_count << "publish" << std::endl;
+		pc_publisher(pc_pub, file_count);
 		std::cout<<std::endl;
 	}
 	
