@@ -22,6 +22,7 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	score_pub = n.advertise<std_msgs::Int32>("/score/process", 10);
 	test_pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points/test", 10);
 	recover_pub = n.advertise<std_msgs::Empty>("/process", 10);
+	gt_pub = n.advertise<visualization_msgs::Marker>("/pose/ground_truth", 10);
 	
 	pose_sub = n.subscribe<geometry_msgs::Pose>("/map2context_result", 1, &Test_pc_run::poseCallback, this);
 	flag_sub = n.subscribe<std_msgs::Bool>("/next_pcd", 1, &Test_pc_run::flagCallback, this);
@@ -42,6 +43,7 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 
 
 	writing_file.open("/home/amsl/m2_result/context.csv", std::ios::out);
+	writing_missnum.open("/home/amsl/m2_result/miss_file.txt", std::ios::out);
  	ROS_INFO_STREAM("\033[1;32mAre we in dataset mode? :" << IS_DATASET<<"\033[0m");
 
 }
@@ -65,6 +67,11 @@ Test_pc_run::~Test_pc_run(){
 	writing_file <<std::endl;
 	for(auto theta : diff_theta){
 		writing_file << theta <<"," <<std::flush;
+	}
+		
+	std::cout<<"----miss file save now----"<<std::endl;
+	for(auto num_ : miss_file_num){
+		writing_missnum << num_ << std::endl;
 	}
 
 	std::cout<<std::endl;
@@ -147,12 +154,38 @@ Test_pc_run::pc_publisher(ros::Publisher pub,const int num){
 	
 	sensor_msgs::PointCloud2 pc;
 	pcl::toROSMsg(*cloud_IN, pc);
-
 	pc.header.frame_id  = "/context_estimate";	
 	pc.header.stamp  = ros::Time(0);
 	pub.publish(pc);
-
 }
+
+
+void
+Test_pc_run::ground_truth_pub(){
+	visualization_msgs::Marker m;
+
+	m.id 	  = 0;
+	m.type   = visualization_msgs::Marker::CYLINDER;
+	m.action = visualization_msgs::Marker::ADD;
+	m.ns      		   	  = "ground_truth";
+	m.header.frame_id 	  = "/map";
+	m.pose.position.x    = pr_poses[file_count].x;
+	m.pose.position.y    = pr_poses[file_count].y;
+	m.pose.position.z    = 0.0;
+	m.pose.orientation.w = 1.0;
+	m.scale.x = 0.2; // 0.8
+	m.scale.y = 0.2;
+	m.scale.z = 1.0; //0.2
+	m.color.a = 1.0;
+	m.color.r = 0.0;
+	m.color.g = 1.0;
+	m.color.b = 0.0;
+
+	m.header.stamp = ros::Time(0);
+
+	gt_pub.publish(m);
+}
+
 
 
 bool
@@ -173,7 +206,8 @@ Test_pc_run::diff_pose(const geometry_msgs::Pose est_pose){
 
 	else{
 		std::cout<<"\033[1;31m"<<std::flush;
-		
+		miss_file_num.push_back(file_count);
+
 		if( (fabs(est_pose.position.x - pr_poses[file_count].x) < 5) 
 				&& (fabs(est_pose.position.y - pr_poses[file_count].y) < 5) ){
 			score.data = 1;
@@ -217,6 +251,9 @@ void
 Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
 
 	std::cout << "File_Number: " << file_count << std::endl;
+
+	ground_truth_pub();
+
 
 	bool pose_flag = diff_pose(*msg);
 

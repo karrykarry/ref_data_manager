@@ -12,14 +12,14 @@
 #include<std_msgs/Int32.h>
 #include<std_msgs/Bool.h>
 #include<std_msgs/Empty.h>
+#include<visualization_msgs/Marker.h>
 
 #include<tf/transform_datatypes.h>
 #include<tf/transform_broadcaster.h>
 
-#include <pcl/io/pcd_io.h>
-#include <pcl/point_types.h>
-#include <ros/ros.h>
-#include <pcl_conversions/pcl_conversions.h>
+#include<pcl/io/pcd_io.h>
+#include<pcl/point_types.h>
+#include<pcl_conversions/pcl_conversions.h>
 
 
 class Test_pc_run{
@@ -29,6 +29,7 @@ class Test_pc_run{
 		ros::Publisher score_pub;
 		ros::Publisher test_pc_pub;
 		ros::Publisher recover_pub;
+		ros::Publisher gt_pub;
 		
 		ros::Subscriber pose_sub;
 		ros::Subscriber flag_sub;
@@ -37,17 +38,18 @@ class Test_pc_run{
 		std::string pc_file_name;
 		bool IS_DATASET;
 		
-		std::vector <geometry_msgs::Point> pr_poses;
+		std::vector<geometry_msgs::Point> pr_poses;
+		std::vector<int> miss_file_num;
 	
 		std::vector<std::string> split(const std::string &str, char sep);
 		void pr_list_pub();
 
 
 		std::ofstream writing_file;
+		std::ofstream writing_missnum;
 		std::vector<double> diff_x;
 		std::vector<double> diff_y;
 		std::vector<double> diff_theta;
-
 
 
 		std_msgs::Int32 score;
@@ -57,6 +59,7 @@ class Test_pc_run{
 		int pose_true_cnt, yaw_true_cnt, all_true_cnt;
 		bool nx_flag;
 
+		void ground_truth_pub();
 		bool diff_pose(const geometry_msgs::Pose est_pose);
 		bool diff_yaw(const double yaw1, const double yaw2);
 	
