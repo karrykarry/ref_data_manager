@@ -12,6 +12,7 @@
 #include<std_msgs/Int32.h>
 #include<std_msgs/Bool.h>
 #include<std_msgs/Empty.h>
+#include<geometry_msgs/Pose.h>
 #include<visualization_msgs/Marker.h>
 
 #include<tf/transform_datatypes.h>
@@ -23,6 +24,21 @@
 
 
 class Test_pc_run{
+	
+	public:
+		Test_pc_run(ros::NodeHandle n,ros::NodeHandle priv_nh);
+		~Test_pc_run();
+
+		void pc_publisher(ros::Publisher pub, const int num);
+		void poseCallback(const geometry_msgs::PoseConstPtr &msg);
+		void flagCallback(const std_msgs::BoolConstPtr &msg);
+
+		double deg2rad(const double yaw_){
+			double yaw = yaw_;
+			while(yaw >= M_PI) yaw -= 2.0*M_PI;
+			while(yaw <= -M_PI) yaw += 2.0*M_PI;
+			return yaw;
+		}
 
 	private:
 		ros::Publisher pc_pub;
@@ -36,9 +52,9 @@ class Test_pc_run{
 
 		std::string file_dir, file_dir2, pc_file_dir, odom_file_dir, odom_list;
 		std::string pc_file_name;
-		bool IS_DATASET;
+		bool IS_DATASET, IS_CLEANUP;
 		
-		std::vector<geometry_msgs::Point> pr_poses;
+		std::vector<geometry_msgs::Pose> pr_poses;
 		std::vector<int> miss_file_num;
 	
 		std::vector<std::string> split(const std::string &str, char sep);
@@ -59,24 +75,22 @@ class Test_pc_run{
 		int pose_true_cnt, yaw_true_cnt, all_true_cnt;
 		bool nx_flag;
 
+		void miss_file();
 		void ground_truth_pub();
 		bool diff_pose(const geometry_msgs::Pose est_pose);
 		bool diff_yaw(const double yaw1, const double yaw2);
-	
-	public:
-		Test_pc_run(ros::NodeHandle n,ros::NodeHandle priv_nh);
-		~Test_pc_run();
 
-		void pc_publisher(ros::Publisher pub, const int num);
-		void poseCallback(const geometry_msgs::PoseConstPtr &msg);
-		void flagCallback(const std_msgs::BoolConstPtr &msg);
+		class Miss_checker{
+			public:
+				Miss_checker(std::string);
+				int missfile_num();
+			private:
+				std::vector<int> file_num_list;	
+		};
+		Miss_checker *miss_checker;
 
-		double deg2rad(const double yaw_){
-			double yaw = yaw_;
-			while(yaw >= M_PI) yaw -= 2.0*M_PI;
-			while(yaw <= -M_PI) yaw += 2.0*M_PI;
-			return yaw;
-		}
+
+
 };
 
 #endif

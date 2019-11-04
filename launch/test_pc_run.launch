@@ -3,12 +3,29 @@
 
 
 	<arg name="is_dataset"/>
+	<!-- <arg name="is_cleanup" defalut="true"/> -->
 
 
 	<node name="test_pc_run" pkg="ref_data_manager" type="test_pc_run" output="screen" >
 		<rosparam file="$(find ref_data_manager)/config/experiment_info.yaml"/>
 		<param name="IS_DATASET" value="$(arg is_dataset)" />
+		<!-- <param name="IS_CLEANUP" value="$(arg is_cleanup)" /> -->
+		<param name="IS_CLEANUP" value="true"/>
 	</node>
+
+	<!-- ファイルの番号と対応してみやすいかも -->
+
+	<node name="realtime_histogram_match_fb" pkg="itst_desc" type="realtime_histogram_match_fb" output="screen" >
+		<rosparam file="$(find ref_data_manager)/config/itst_info.yaml"/>
+		
+		<param name="Number_of_candidate" value="3" />
+		
+		<remap from="/velodyne_points" to="/velodyne_obstacles" />
+		<remap from="/score/vis" to="/score/vis/itst" />
+		<remap from="/score/best" to="/score/best/itst" />
+		<remap from="/score/better" to="/score/better/itst" />
+	</node>
+
 	
 </launch>
 

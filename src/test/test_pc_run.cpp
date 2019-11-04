@@ -23,7 +23,7 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	test_pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points/test", 10);
 	recover_pub = n.advertise<std_msgs::Empty>("/process", 10);
 	gt_pub = n.advertise<visualization_msgs::Marker>("/pose/ground_truth", 10);
-	
+
 	pose_sub = n.subscribe<geometry_msgs::Pose>("/map2context_result", 1, &Test_pc_run::poseCallback, this);
 	flag_sub = n.subscribe<std_msgs::Bool>("/next_pcd", 1, &Test_pc_run::flagCallback, this);
 
@@ -34,18 +34,20 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	private_nh_.param("TEST/ODOM_LIST", odom_list, {"/list.txt"});
 	
 	private_nh_.param("IS_DATASET", IS_DATASET, {false});
+	private_nh_.param("IS_CLEANUP", IS_CLEANUP, {false});
 
 	pr_list_pub();
 	
+	if(IS_CLEANUP) 
+		miss_checker = new Miss_checker("/home/amsl/m2_result/miss_file-2019-9-25-cnnok.txt");
+
 	pc_file_name = file_dir;
 	pc_file_name += file_dir2;
 	pc_file_name += pc_file_dir;
 
-
 	writing_file.open("/home/amsl/m2_result/context.csv", std::ios::out);
 	writing_missnum.open("/home/amsl/m2_result/miss_file.txt", std::ios::out);
  	ROS_INFO_STREAM("\033[1;32mAre we in dataset mode? :" << IS_DATASET<<"\033[0m");
-
 }
 
 Test_pc_run::~Test_pc_run(){
@@ -121,14 +123,15 @@ Test_pc_run::pr_list_pub(){
 		if(!reading_line_buffer.empty()){
 			v = split(reading_line_buffer,',');
 			// std::cout<<atof(v[0].c_str())<<","<<atof(v[1].c_str())<<","<<atof(v[2].c_str())<<std::endl;
-			std::cout<<atof(v[0].c_str())<<","<<atof(v[1].c_str())<<","<<atof(v[5].c_str())<<std::endl;
+			std::cout<<atof(v[0].c_str())<<","<<atof(v[1].c_str())<<","<<atof(v[2].c_str())<<","<<atof(v[5].c_str())<<std::endl;
 
-			geometry_msgs::Point pr_pose;
-			pr_pose.x = atof(v[0].c_str());
-			pr_pose.y = atof(v[1].c_str());
+			geometry_msgs::Pose pr_pose;
+			pr_pose.position.x = atof(v[0].c_str());
+			pr_pose.position.y = atof(v[1].c_str());
+			pr_pose.position.z = atof(v[2].c_str());
 			
-			// z:2 roll:3 pitch:4 yaw:5
-			pr_pose.z = atof(v[5].c_str());	//yaw
+			//roll:3 pitch:4 yaw:5
+			pr_pose.orientation.z = atof(v[5].c_str());	//yaw
 
 			pr_poses.push_back(pr_pose);
 		}
@@ -169,9 +172,9 @@ Test_pc_run::ground_truth_pub(){
 	m.action = visualization_msgs::Marker::ADD;
 	m.ns      		   	  = "ground_truth";
 	m.header.frame_id 	  = "/map";
-	m.pose.position.x    = pr_poses[file_count].x;
-	m.pose.position.y    = pr_poses[file_count].y;
-	m.pose.position.z    = 0.0;
+	m.pose.position.x    = pr_poses[file_count].position.x;
+	m.pose.position.y    = pr_poses[file_count].position.y;
+	m.pose.position.z    = pr_poses[file_count].position.z;
 	m.pose.orientation.w = 1.0;
 	m.scale.x = 0.2; // 0.8
 	m.scale.y = 0.2;
@@ -195,11 +198,11 @@ Test_pc_run::diff_pose(const geometry_msgs::Pose est_pose){
 	std::cout << 
 		"estimate(x, y): " << est_pose.position.x << "," << est_pose.position.y << 
 		
-		"  odometry(x, y): " << pr_poses[file_count].x << "," << pr_poses[file_count].y <<std::endl;
+		"  odometry(x, y): " << pr_poses[file_count].position.x << "," << pr_poses[file_count].position.y <<std::endl;
 	
 
-	if( (fabs(est_pose.position.x - pr_poses[file_count].x) < 0.5) 
-			&& (fabs(est_pose.position.y - pr_poses[file_count].y) < 0.5) ){
+	if( (fabs(est_pose.position.x - pr_poses[file_count].position.x) < 0.5) 
+			&& (fabs(est_pose.position.y - pr_poses[file_count].position.y) < 0.5) ){
 		result_flag = true;
 		score.data = 0;
 	}
@@ -208,19 +211,19 @@ Test_pc_run::diff_pose(const geometry_msgs::Pose est_pose){
 		std::cout<<"\033[1;31m"<<std::flush;
 		miss_file_num.push_back(file_count);
 
-		if( (fabs(est_pose.position.x - pr_poses[file_count].x) < 5) 
-				&& (fabs(est_pose.position.y - pr_poses[file_count].y) < 5) ){
+		if( (fabs(est_pose.position.x - pr_poses[file_count].position.x) < 5) 
+				&& (fabs(est_pose.position.y - pr_poses[file_count].position.y) < 5) ){
 			score.data = 1;
 		}
 		else score.data = 2;
 	}
 		
-	std::cout<< "Diffrence(x, y):" << est_pose.position.x - pr_poses[file_count].x << ","
-		<< est_pose.position.y - pr_poses[file_count].y << "\033[0m" << std::endl;
+	std::cout<< "Diffrence(x, y):" << est_pose.position.x - pr_poses[file_count].position.x << ","
+		<< est_pose.position.y - pr_poses[file_count].position.y << "\033[0m" << std::endl;
 
 	if(!IS_DATASET){
-		diff_x.push_back(fabs(est_pose.position.x - pr_poses[file_count].x));
-		diff_y.push_back(fabs(est_pose.position.y - pr_poses[file_count].y));
+		diff_x.push_back(fabs(est_pose.position.x - pr_poses[file_count].position.x));
+		diff_y.push_back(fabs(est_pose.position.y - pr_poses[file_count].position.y));
 	}
 
 	return result_flag;
@@ -259,7 +262,7 @@ Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
 
 	double est_yaw, odo_yaw;
 	est_yaw = deg2rad(msg->orientation.z);
-	odo_yaw = deg2rad(pr_poses[file_count].z);
+	odo_yaw = deg2rad(pr_poses[file_count].orientation.z);
 
 	std::cout<<"estimate(yaw): "<< est_yaw <<"[deg]"<<"  odometry(yaw): "<< odo_yaw <<"[deg]"<<std::endl;
 	bool yaw_flag = diff_yaw(est_yaw, odo_yaw);
@@ -290,6 +293,7 @@ Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
 	// if(nx_flag) pc_publisher(pc_pub, file_count);
 	if(!IS_DATASET){
 		file_count++;
+		if(IS_CLEANUP) file_count = miss_checker->missfile_num(); 
 		std::cout<<"###########################"<<std::endl;	
 		std::cout << "File_Number: " << file_count << "publish" << std::endl;
 		pc_publisher(pc_pub, file_count);
@@ -317,6 +321,7 @@ void
 Test_pc_run::flagCallback(const std_msgs::BoolConstPtr &msg){
 	
 	file_count++;
+	if(IS_CLEANUP) file_count = miss_checker->missfile_num(); 
 	std::cout<<std::endl;	
 	std::cout<<"###########################"<<std::endl;	
 	std::cout << "File_Number: " << file_count << "publish" << std::endl;
@@ -325,5 +330,44 @@ Test_pc_run::flagCallback(const std_msgs::BoolConstPtr &msg){
 
 	nx_flag = msg->data;
 
+}
+
+
+/////// missの原因を探るため //////////
+Test_pc_run::Miss_checker::Miss_checker(std::string input_){
+	std::string ref_list = input_;
+	std::ifstream reading_file;
+	std::string reading_line_buffer;
+	
+	reading_file.open(ref_list, std::ios::in);
+	
+	while (!reading_file.eof())
+	{
+		// read by line
+		std::getline(reading_file, reading_line_buffer);
+		if(!reading_line_buffer.empty()){
+			file_num_list.push_back(atof(reading_line_buffer.c_str()));				
+		}
+	}
+	reading_file.close();
+
+	for(auto file_num_ : file_num_list){
+		std::cout<<file_num_<<std::endl;
+
+	}
+}
+
+int
+Test_pc_run::Miss_checker::missfile_num(){
+	static int i = 0;
+	static int cnt_=0;
+	if(i>=file_num_list.size()) i-= file_num_list.size();
+	
+	int ans_ = file_num_list[i];
+	
+	cnt_++;
+	// if(cnt_%3==0)
+		i++;
+	return ans_;
 }
 
