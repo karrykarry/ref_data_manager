@@ -3,17 +3,16 @@
 
 
 	<arg name="is_dataset"/>
-	<!-- <arg name="is_cleanup" defalut="true"/> -->
+	<arg name="is_cleanup"/>
 
 
 	<node name="test_pc_run" pkg="ref_data_manager" type="test_pc_run" output="screen" >
 		<rosparam file="$(find ref_data_manager)/config/experiment_info.yaml"/>
 		<param name="IS_DATASET" value="$(arg is_dataset)" />
-		<!-- <param name="IS_CLEANUP" value="$(arg is_cleanup)" /> -->
-		<param name="IS_CLEANUP" value="true"/>
+		<param name="IS_CLEANUP" value="$(arg is_cleanup)" />
 	</node>
 
-	<!-- ファイルの番号と対応してみやすいかも -->
+	<!--下にitstを入れている理由 ： ファイルの番号と対応してみやすいかも -->
 
 	<node name="realtime_histogram_match_fb" pkg="itst_desc" type="realtime_histogram_match_fb" output="screen" >
 		<rosparam file="$(find ref_data_manager)/config/itst_info.yaml"/>

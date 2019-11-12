@@ -13,6 +13,7 @@
 #include<std_msgs/Bool.h>
 #include<std_msgs/Empty.h>
 #include<geometry_msgs/Pose.h>
+#include<geometry_msgs/PoseWithCovarianceStamped.h>
 #include<visualization_msgs/Marker.h>
 
 #include<tf/transform_datatypes.h>
@@ -30,6 +31,7 @@ class Test_pc_run{
 		~Test_pc_run();
 
 		void pc_publisher(ros::Publisher pub, const int num);
+		void eplCallback(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg);
 		void poseCallback(const geometry_msgs::PoseConstPtr &msg);
 		void flagCallback(const std_msgs::BoolConstPtr &msg);
 
@@ -47,6 +49,7 @@ class Test_pc_run{
 		ros::Publisher recover_pub;
 		ros::Publisher gt_pub;
 		
+		ros::Subscriber epllipse_sub;
 		ros::Subscriber pose_sub;
 		ros::Subscriber flag_sub;
 

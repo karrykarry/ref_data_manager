@@ -24,6 +24,7 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	recover_pub = n.advertise<std_msgs::Empty>("/process", 10);
 	gt_pub = n.advertise<visualization_msgs::Marker>("/pose/ground_truth", 10);
 
+	epllipse_sub = n.subscribe("/error_epllipse/self_pose", 1, &Test_pc_run::eplCallback, this);
 	pose_sub = n.subscribe<geometry_msgs::Pose>("/map2context_result", 1, &Test_pc_run::poseCallback, this);
 	flag_sub = n.subscribe<std_msgs::Bool>("/next_pcd", 1, &Test_pc_run::flagCallback, this);
 
@@ -48,6 +49,7 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	writing_file.open("/home/amsl/m2_result/context.csv", std::ios::out);
 	writing_missnum.open("/home/amsl/m2_result/miss_file.txt", std::ios::out);
  	ROS_INFO_STREAM("\033[1;32mAre we in dataset mode? :" << IS_DATASET<<"\033[0m");
+ 	ROS_INFO_STREAM("\033[1;32mAre we Miss_checker mode? :" << IS_CLEANUP<<"\033[0m");
 }
 
 Test_pc_run::~Test_pc_run(){
@@ -249,6 +251,57 @@ Test_pc_run::diff_yaw(const double yaw1,const double yaw2){
 	return result_flag;
 }
 
+//誤差楕円は評価の仕方を甘くしているだけ
+//分布よりビタイチの精度を求める
+void 
+Test_pc_run::eplCallback(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg){
+	std::cout << "epllipse" << std::endl;
+
+/*
+
+	Eigen::MatrixXf sigma= Eigen::MatrixXf::Zero(2,2);//共分散行列
+	Eigen::MatrixXf sigma_uv= Eigen::MatrixXf::Zero(2,2);//分散共分散行列の座標軸の変換するため
+	Eigen::Vector2d c_sigma;
+
+	sigma.coeffRef(0,0) = e_xx - ave_x*ave_x; 
+	sigma.coeffRef(0,1) = sigma.coeffRef(1,0) = e_xy - ave_x*ave_y; 
+	sigma.coeffRef(1,1) = e_yy - ave_y*ave_y; 
+////////////////////誤差楕円を書く
+//
+	sigma_uv.coeffRef(0,0) = sigma.coeffRef(0,0)+sigma.coeffRef(1,1)+
+		pow( pow(sigma.coeffRef(0,0)-sigma.coeffRef(1,1), 2)+4*pow(sigma.coeffRef(0,1), 2), 0.5);	
+	
+	sigma_uv.coeffRef(1,1) = sigma.coeffRef(0,0)+sigma.coeffRef(1,1) -
+		pow( pow(sigma.coeffRef(0,0)-sigma.coeffRef(1,1), 2)+4*pow(sigma.coeffRef(0,1), 2), 0.5);
+
+	sigma_uv.coeffRef(0,0) /= 2;
+	sigma_uv.coeffRef(1,1) /= 2;
+
+	std::cout<<"sigma_uv:\n"<<sigma_uv<<std::endl;
+	c_sigma.x() = pow(MAHALANOBIS_SQRT_DISTANCE*sigma_uv.coeffRef(0,0), 0.5);
+	c_sigma.y() = pow(MAHALANOBIS_SQRT_DISTANCE*sigma_uv.coeffRef(1,1), 0.5);
+	std::cout<<"c_sigma:\n"<<c_sigma<<std::endl;
+
+
+	nav_msgs::Odometry epllipse;
+
+	epllipse.header.stamp = ros::Time();
+	epllipse.header.frame_id = "/context_estimate";
+	epllipse.pose.covariance[0] = c_sigma.x();
+	epllipse.pose.covariance[1] = c_sigma.y();
+	epllipse.pose.covariance[6] = c_sigma.x();
+	epllipse.pose.covariance[7] = c_sigma.y();
+	epllipse_pub.publish(epllipse);
+
+	return sigma;
+
+
+*/
+
+
+}
+
+
 //file_count の順番に気をつける
 void 
 Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
@@ -351,10 +404,11 @@ Test_pc_run::Miss_checker::Miss_checker(std::string input_){
 	}
 	reading_file.close();
 
+	std::cout<<"########### miss file ###########"<<std::endl;	
 	for(auto file_num_ : file_num_list){
-		std::cout<<file_num_<<std::endl;
-
+		std::cout<<file_num_<<","<<std::flush;
 	}
+	std::cout<<std::endl;
 }
 
 int
