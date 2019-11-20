@@ -372,7 +372,10 @@ Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
 
 void 
 Test_pc_run::flagCallback(const std_msgs::BoolConstPtr &msg){
-	
+
+	// if(file_count>205) file_count = 195;
+	// else if(file_count<194) file_count = 195;
+
 	file_count++;
 	if(IS_CLEANUP) file_count = miss_checker->missfile_num(); 
 	std::cout<<std::endl;	

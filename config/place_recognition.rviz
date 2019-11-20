@@ -468,9 +468,9 @@ Visualization Manager:
           Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
-          Max Intensity: 17.2106285
+          Max Intensity: 18.7718315
           Min Color: 0; 0; 0
-          Min Intensity: -3.04288077
+          Min Intensity: -2.87834978
           Name: estimate_result
           Position Transformer: XYZ
           Queue Size: 10
@@ -745,7 +745,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 4.81000376
+      Angle: 6.11501837
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
@@ -755,11 +755,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 27.7307911
+      Scale: 13.4146633
       Target Frame: context_estimate
       Value: TopDownOrtho (rviz)
-      X: 6.27700377
-      Y: 1.18491638
+      X: 13.1497641
+      Y: 0.00874091685
     Saved: ~
 Window Geometry:
   Displays:
