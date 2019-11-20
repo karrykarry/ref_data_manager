@@ -40,7 +40,8 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	pr_list_pub();
 	
 	if(IS_CLEANUP) 
-		miss_checker = new Miss_checker("/home/amsl/m2_result/miss_file-2019-9-25-cnnok.txt");
+		// miss_checker = new Miss_checker("/home/amsl/m2_result/miss_file-2019-9-25-cnnok.txt");
+		miss_checker = new Miss_checker("/home/amsl/m2_result/out_file-2018-9-9-bestonly.txt");
 
 	pc_file_name = file_dir;
 	pc_file_name += file_dir2;
@@ -48,6 +49,7 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 
 	writing_file.open("/home/amsl/m2_result/context.csv", std::ios::out);
 	writing_missnum.open("/home/amsl/m2_result/miss_file.txt", std::ios::out);
+	writing_outnum.open("/home/amsl/m2_result/out_file.txt", std::ios::out);
  	ROS_INFO_STREAM("\033[1;32mAre we in dataset mode? :" << IS_DATASET<<"\033[0m");
  	ROS_INFO_STREAM("\033[1;32mAre we Miss_checker mode? :" << IS_CLEANUP<<"\033[0m");
 }
@@ -77,6 +79,12 @@ Test_pc_run::~Test_pc_run(){
 	for(auto num_ : miss_file_num){
 		writing_missnum << num_ << std::endl;
 	}
+
+	std::cout<<"----out file save now----"<<std::endl;
+	for(auto num_ : out_file_num){
+		writing_outnum << num_ << std::endl;
+	}
+
 
 	std::cout<<std::endl;
 	std::cout<<std::endl;
@@ -372,20 +380,21 @@ Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
 
 void 
 Test_pc_run::flagCallback(const std_msgs::BoolConstPtr &msg){
-
+	static bool flag_=false;
 	// if(file_count>205) file_count = 195;
 	// else if(file_count<194) file_count = 195;
+	if(flag_) out_file_num.push_back(file_count);
 
 	file_count++;
 	if(IS_CLEANUP) file_count = miss_checker->missfile_num(); 
 	std::cout<<std::endl;	
-	std::cout<<"###########################"<<std::endl;	
+	std::cout<<"↑ out!!!###########################"<<std::endl;	
 	std::cout << "File_Number: " << file_count << "publish" << std::endl;
 	pc_publisher(pc_pub, file_count);
 	pc_publisher(test_pc_pub, file_count);
 
 	nx_flag = msg->data;
-
+	flag_ = true;
 }
 
 

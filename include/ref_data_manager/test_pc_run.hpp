@@ -59,6 +59,7 @@ class Test_pc_run{
 		
 		std::vector<geometry_msgs::Pose> pr_poses;
 		std::vector<int> miss_file_num;
+		std::vector<int> out_file_num;
 	
 		std::vector<std::string> split(const std::string &str, char sep);
 		void pr_list_pub();
@@ -66,6 +67,7 @@ class Test_pc_run{
 
 		std::ofstream writing_file;
 		std::ofstream writing_missnum;
+		std::ofstream writing_outnum;
 		std::vector<double> diff_x;
 		std::vector<double> diff_y;
 		std::vector<double> diff_theta;
