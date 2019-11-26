@@ -26,6 +26,7 @@
 #include<ros/ros.h>
 #include<std_msgs/Bool.h>
 #include<sensor_msgs/PointCloud2.h>
+#include<nav_msgs/Odometry.h>
 
 #include<tf/transform_datatypes.h>
 #include<tf/transform_broadcaster.h>
@@ -41,6 +42,7 @@ class Test_pc_run{
 	private:
 		ros::Publisher pc_pub;
 		ros::Publisher test_pc_pub;
+		ros::Publisher odom_pub;
 		ros::Subscriber pose_sub;
 		ros::Subscriber flag_sub;
 
@@ -65,6 +67,7 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 {
 	pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points", 10);
 	test_pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points/test", 10);
+	odom_pub = n.advertise<nav_msgs::Odometry>("/estimate_pose/odometry", 10);
 	
 	pose_sub = n.subscribe<geometry_msgs::Pose>("/map2context_result", 1, &Test_pc_run::poseCallback, this);
 	flag_sub = n.subscribe<std_msgs::Bool>("/next_pcd", 1, &Test_pc_run::flagCallback, this);
@@ -105,11 +108,16 @@ Test_pc_run::pc_publisher(ros::Publisher pub,const int num, const ros::Time now_
 
 void 
 Test_pc_run::poseCallback(const geometry_msgs::PoseConstPtr &msg){
+	nav_msgs::Odometry odom;
+	odom.header.stamp = now_time;
+	odom.header.frame_id = "/map";
+	odom.pose.pose = *msg;
+	odom_pub.publish(odom);
 
 	std::cout << "File_Number: " << file_count << std::endl;
 	std::cout<<now_time<<std::endl;
 
-	pc_publisher(test_pc_pub, file_count ,now_time);
+	pc_publisher(test_pc_pub, file_count, now_time);
 	pc_publisher(pc_pub, file_count, now_time);
 	
 	file_count++;
@@ -121,7 +129,7 @@ Test_pc_run::flagCallback(const std_msgs::BoolConstPtr &msg){
 	std::cout << "File_Number: " << file_count << std::endl;
 	std::cout<<now_time<<std::endl;
 	
-	pc_publisher(test_pc_pub, file_count ,now_time);
+	pc_publisher(test_pc_pub, file_count, now_time);
 	pc_publisher(pc_pub, file_count, now_time);
 
 	file_count++;
