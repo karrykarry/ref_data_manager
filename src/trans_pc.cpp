@@ -41,6 +41,7 @@ class Trans_pc{
 		
 		tf::TransformBroadcaster br;
 		tf::Transform transform; 
+		bool odom_flag;
 		
 	public:
 		Trans_pc(ros::NodeHandle n, ros::NodeHandle private_nh_);
@@ -53,7 +54,7 @@ class Trans_pc{
 
 
 Trans_pc::Trans_pc(ros::NodeHandle n, ros::NodeHandle private_nh_):
-	input_cloud(new pcl::PointCloud<pcl::PointXYZI>)
+	input_cloud(new pcl::PointCloud<pcl::PointXYZI>), odom_flag(false)
 {	
 	pc_pub= n.advertise<sensor_msgs::PointCloud2>("/velodyne_points/trans", 1000);
 	pc_sub = n.subscribe("/velodyne_points", 1, &Trans_pc::lidarCallback, this);
@@ -94,6 +95,7 @@ Trans_pc::odomCallback(const nav_msgs::OdometryConstPtr& msg)
 {
 	buffer_quat = msg->pose.pose.orientation;
 	tf_pub(msg->pose.pose.position, msg->header.stamp);
+	odom_flag = true;
 }
 
 
@@ -103,22 +105,24 @@ Trans_pc::lidarCallback(const sensor_msgs::PointCloud2ConstPtr& input)
 	pcl::PointCloud<pcl::PointXYZI>::Ptr transformed_cloud (new pcl::PointCloud<pcl::PointXYZI>);
     // Convert the sensor_msgs/PointCloud2 data to pcl/PointCloud
 	pcl::fromROSMsg (*input, *input_cloud);
-	
-	double roll, pitch, yaw;
-	GetRPY(buffer_quat, roll, pitch, yaw);
-
-	Eigen::Matrix3f rot;
-	rot = Eigen::AngleAxisf(roll*(-1), Eigen::Vector3f::UnitX()) * Eigen::AngleAxisf(pitch*(-1), Eigen::Vector3f::UnitY()) * Eigen::AngleAxisf(yaw, Eigen::Vector3f::UnitZ());
-
-	Eigen::Translation3f init_translation (0, 0, 0);
-
-	Eigen::Matrix4f transform = (rot * init_translation).matrix ();
-
-	pcl::transformPointCloud (*input_cloud, *transformed_cloud, transform);
-
 	sensor_msgs::PointCloud2 after_pc;
 
-	pcl::toROSMsg(*transformed_cloud, after_pc);
+	if(odom_flag){
+		double roll, pitch, yaw;
+		GetRPY(buffer_quat, roll, pitch, yaw);
+
+		Eigen::Matrix3f rot;
+		rot = Eigen::AngleAxisf(roll*(-1), Eigen::Vector3f::UnitX()) * Eigen::AngleAxisf(pitch*(-1), Eigen::Vector3f::UnitY()) * Eigen::AngleAxisf(yaw, Eigen::Vector3f::UnitZ());
+
+		Eigen::Translation3f init_translation (0, 0, 0);
+
+		Eigen::Matrix4f transform = (rot * init_translation).matrix ();
+
+		pcl::transformPointCloud (*input_cloud, *transformed_cloud, transform);
+		pcl::toROSMsg(*transformed_cloud, after_pc);
+	}
+	else pcl::toROSMsg(*input_cloud, after_pc);
+
 	after_pc.header.stamp = input->header.stamp;
 	// after_pc.header.frame_id = child_frame;
 	after_pc.header.frame_id = VELODYNE_FRAME;

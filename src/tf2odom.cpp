@@ -1,7 +1,7 @@
-//
-// 引数にくっつけたいpcdを取る
-//
-
+/*
+ * loam から求まるtf をodometryに変換する
+ *
+*/
 #include <stdio.h>
 #include <iostream>
 #include <ros/ros.h>
@@ -80,7 +80,7 @@ int main (int argc, char** argv)
 	
 	Tf2odom tf2odom(n, private_nh_);
 
-    ros::Rate loop_rate(20);
+    ros::Rate loop_rate(100);
 		
 	while(ros::ok()){
 		tf2odom.listen_tf();
