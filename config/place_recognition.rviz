@@ -24,7 +24,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: cloud_pcd
+    SyncSource: Edge Features (green)
   - Class: rviz/Displays
     Help Height: 75
     Name: Displays
@@ -32,7 +32,6 @@ Panels:
       Expanded:
         - /Basic1
         - /Basic1/TF1/Frames1
-        - /Basic1/cloud_pcd1
         - /scan_context1
         - /scan_context1/Node_Covariance1/Covariance1
         - /scan_context1/Node_Covariance1/Covariance1/Position1
@@ -136,7 +135,7 @@ Visualization Manager:
           Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
-          Max Intensity: 175.660019
+          Max Intensity: 194
           Min Color: 0; 0; 0
           Min Intensity: 0
           Name: cloud_pcd
@@ -346,7 +345,7 @@ Visualization Manager:
           Marker Topic: /pr/best_estimate_num
           Name: best_num
           Namespaces:
-            histogram: true
+            {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
@@ -392,7 +391,7 @@ Visualization Manager:
           Marker Topic: /RF
           Name: RF
           Namespaces:
-            {}
+            RF: true
           Queue Size: 100
           Value: true
       Enabled: true
@@ -474,9 +473,9 @@ Visualization Manager:
           Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
-          Max Intensity: 18.2208195
+          Max Intensity: 11.8137226
           Min Color: 0; 0; 0
-          Min Intensity: -3.2693224
+          Min Intensity: -5.33581209
           Name: estimate_result
           Position Transformer: XYZ
           Queue Size: 10
@@ -710,7 +709,7 @@ Visualization Manager:
           Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
-          Max Intensity: 166
+          Max Intensity: 5
           Min Color: 0; 0; 0
           Min Intensity: 0
           Name: Trajectory
@@ -845,7 +844,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 4.73999882
+      Angle: 4.66999769
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
@@ -855,7 +854,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 5.62834215
+      Scale: 6.82126808
       Target Frame: map
       Value: TopDownOrtho (rviz)
       X: 35.7270966
