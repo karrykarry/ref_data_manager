@@ -4,7 +4,7 @@
 	<node name="itst2data_pub" pkg="ref_data_manager" type="itst2data_pub" output="screen" >
 		<rosparam file="$(find ref_data_manager)/config/pr_info.yaml"/>
 
-		<param name="Number_of_candidate" value="0" />
+		<param name="Number_of_candidate" value="10" />
 		<param name="IMAGE_FLAG" value="false" />
 
 		<remap from="/score/vis" to="/score/vis/itst" />

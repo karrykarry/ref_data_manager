@@ -16,6 +16,7 @@
 		<param name="SKIP_TIME" value="10" />
 
 
+		<remap from="/odometer" to="/vis/odometry" />
 		<!-- <remap from="/velodyne_points" to="/velodyne_obstacles/test" /> -->
 	</node>
 	
