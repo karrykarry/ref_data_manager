@@ -2,6 +2,7 @@
 <launch>
 	
 	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find ref_data_manager)/config/place_recognition.rviz"/>
+	<!-- <node pkg="rviz" type="rviz" name="rviz" args="&#45;d $(find ref_data_manager)/config/si.rviz"/> -->
 	
 </launch>
 

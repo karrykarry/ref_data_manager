@@ -48,9 +48,9 @@ Itst2data_pub::make_vis_marker(const double now_x,const double now_y,const doubl
 	m.action = visualization_msgs::Marker::ADD;
 	m.lifetime = ros::Duration(0);
 	// 形
-	m.color.r = 1.0;
+	m.color.r = 0.5;
 	m.color.g = 1.0;
-	m.color.b = 1.0;
+	m.color.b = 0.0;
 	m.color.a = 1.0; 
 
 	m.pose.orientation.x = 0.0;
@@ -61,7 +61,7 @@ Itst2data_pub::make_vis_marker(const double now_x,const double now_y,const doubl
 	m.pose.position.y = now_y;	
 	m.pose.position.z = now_z;
 
-	m.scale.z = 5.0; 
+	m.scale.z = 6.0; 
 
 	m.id = id_num;
 	m.text =  std::to_string(num).substr(0,4);
@@ -152,7 +152,7 @@ Itst2data_pub::best_num_vis(const int num){
 	visualization_msgs::Marker est_num;	//estimate_num
 	est_num =  make_vis_marker(pr_poses[num].x, pr_poses[num].y, pr_poses[num].z, num, 0);
 
-	color_change(est_num, 1.0, 1.0, 1.0, 1.0);	//white
+	color_change(est_num, 1.0, 0.0, 0.0, 1.0);	//white
 	
 	best_estimate_num_pub.publish(est_num);
 }
@@ -213,7 +213,7 @@ Itst2data_pub::betterscorecallback(const std_msgs::Int32MultiArrayConstPtr &msgs
 			num_m = make_vis_marker(pr_poses[num].x, pr_poses[num].y, pr_poses[num].z, num, cnt_);
 			cnt_++;
 
-			color_change(num_m, 1.0, 0.0, 0.0, 1.0);	//red
+			color_change(num_m, 1.0, 1.0, 0.0, 1.0);	//red
 			better_array.markers.push_back(num_m);
 			flag[num]=true;
 		}
