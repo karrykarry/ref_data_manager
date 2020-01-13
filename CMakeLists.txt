@@ -230,6 +230,13 @@ target_link_libraries(raycasting
 )
 
 
+add_executable(pub_pcd src/test/pub_pcd.cpp)
+target_link_libraries(pub_pcd
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+)
+
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use

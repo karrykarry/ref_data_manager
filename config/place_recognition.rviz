@@ -709,7 +709,7 @@ Visualization Manager:
           Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
-          Max Intensity: 5
+          Max Intensity: 24
           Min Color: 0; 0; 0
           Min Intensity: 0
           Name: Trajectory
@@ -739,7 +739,7 @@ Visualization Manager:
           Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
-          Max Intensity: 108
+          Max Intensity: 182.666672
           Min Color: 0; 0; 0
           Min Intensity: 0
           Name: final_map
@@ -844,7 +844,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 4.66999769
+      Angle: 4.62499714
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
@@ -854,11 +854,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 6.82126808
+      Scale: 3.40043354
       Target Frame: map
       Value: TopDownOrtho (rviz)
-      X: 35.7270966
-      Y: 9.29285145
+      X: 69.2036667
+      Y: 100.220078
     Saved: ~
 Window Geometry:
   Displays:
