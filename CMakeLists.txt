@@ -237,6 +237,13 @@ target_link_libraries(pub_pcd
 )
 
 
+add_executable(raw_pc_run src/test/raw_pc_run.cpp)
+target_link_libraries(raw_pc_run
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+)
+
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use

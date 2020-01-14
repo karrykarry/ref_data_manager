@@ -1,0 +1,44 @@
+
+<launch>
+
+  <!-- declare arguments with default values -->
+  <arg name="pcap" default="" />
+  <arg name="calibration" default="$(find velodyne_pointcloud)/params/32db.yaml"/>
+
+  <!-- start nodelet manager and load driver nodelet -->
+  <node pkg="nodelet" type="nodelet" name="velodyne_nodelet_manager" args="manager" >
+	<remap from="/velodyne_points" to="/velodyne_points_" />
+  </node>
+  <arg name="model" default="32E" />
+  <arg name="read_once" default="false" />
+  <arg name="read_fast" default="false" />
+  <arg name="repeat_delay" default="0.0" />
+  <!--arg name="rpm" default="600.0" /-->
+  <arg name="rpm" default="1200.0" />
+  <arg name="frame_id" default="velodyne" />
+  
+  <node pkg="nodelet" type="nodelet" name="driver_nodelet"
+        args="load velodyne_driver/DriverNodelet velodyne_nodelet_manager" >
+    <param name="model" value="$(arg model)"/>
+    <param name="pcap" value="$(arg pcap)"/>
+    <param name="read_once" value="$(arg read_once)"/>
+    <param name="read_fast" value="$(arg read_fast)"/>
+    <param name="repeat_delay" value="$(arg repeat_delay)"/>
+    <param name="rpm" value="$(arg rpm)"/>
+    <param name="frame_id" value="$(arg frame_id)"/>
+  </node>    
+
+  <!-- start cloud nodelet -->
+  <include file="$(find velodyne_pointcloud)/launch/cloud_nodelet.launch">
+    <arg name="calibration" value="$(arg calibration)"/>
+  </include>
+
+  <node name="raw_pc_run" pkg="ref_data_manager" type="raw_pc_run" output="screen" />
+
+
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ref_data_manager)/config/kidnapping.rviz"/>
+
+
+  <node pkg="pcl_ros" type="pcd_to_pointcloud" name="pcd_to_pointcloud" args="/home/amsl/map/perfect_ikuta_2019-09-25-00-48-08.pcd _frame_id:=/map" />
+
+</launch>

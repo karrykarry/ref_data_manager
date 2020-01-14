@@ -48,9 +48,9 @@ Itst2data_pub::make_vis_marker(const double now_x,const double now_y,const doubl
 	m.action = visualization_msgs::Marker::ADD;
 	m.lifetime = ros::Duration(0);
 	// 形
-	m.color.r = 0.5;
+	m.color.r = 1.0;
 	m.color.g = 1.0;
-	m.color.b = 0.0;
+	m.color.b = 1.0;
 	m.color.a = 1.0; 
 
 	m.pose.orientation.x = 0.0;
