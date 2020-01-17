@@ -244,6 +244,13 @@ target_link_libraries(raw_pc_run
 )
 
 
+add_executable(kidnapping_checker src/test/kidnapping_checker.cpp)
+target_link_libraries(kidnapping_checker
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+)
+
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use

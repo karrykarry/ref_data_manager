@@ -57,7 +57,8 @@ class Test_pc_run{
 Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	file_count(0), now_time(0)
 {
-	pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_obstacles/itst", 10);
+	// pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_obstacles/itst", 10);
+	pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points/slam", 10);
 
 	pc_file_name = "/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/pcd";
 }

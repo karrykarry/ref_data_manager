@@ -4,7 +4,8 @@
 	<node name="pr2savepc" pkg="ref_data_manager" type="pr2savepc" output="screen" >
 		<rosparam file="$(find ref_data_manager)/config/pcd_info.yaml"/>
 		
-		<remap from="/velodyne_points" to="/pr/pc" />
+		<!-- <remap from="/velodyne_points" to="/pr/pc" /> -->
+		<remap from="/velodyne_points" to="/velodyne_points/slam" />
 	</node>
 	
 </launch>

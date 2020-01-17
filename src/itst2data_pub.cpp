@@ -152,7 +152,7 @@ Itst2data_pub::best_num_vis(const int num){
 	visualization_msgs::Marker est_num;	//estimate_num
 	est_num =  make_vis_marker(pr_poses[num].x, pr_poses[num].y, pr_poses[num].z, num, 0);
 
-	color_change(est_num, 1.0, 0.0, 0.0, 1.0);	//white
+	color_change(est_num, 1.0, 1.0, 1.0, 1.0);	//white
 	
 	best_estimate_num_pub.publish(est_num);
 }
