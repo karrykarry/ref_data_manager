@@ -251,6 +251,13 @@ target_link_libraries(kidnapping_checker
 )
 
 
+add_executable(rm_groundbynormal_z src/rm_groundbynormal_z.cpp)
+target_link_libraries(rm_groundbynormal_z
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+)
+
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use

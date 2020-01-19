@@ -14,7 +14,7 @@
 #include"test_pc_run.hpp"
 
 Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
-	file_count(-1),
+	file_count(400),
 	pose_true_cnt(0), yaw_true_cnt(0), all_true_cnt(0),
 	nx_flag(true)
 {
