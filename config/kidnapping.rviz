@@ -3,7 +3,8 @@ Panels:
     Help Height: 76
     Name: Displays
     Property Tree Widget:
-      Expanded: ~
+      Expanded:
+        - /others1/estimate_result1/Autocompute Value Bounds1
       Splitter Ratio: 0.5
     Tree Height: 361
   - Class: rviz/Selection
@@ -24,7 +25,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: pf_score
+    SyncSource: cloud_pcd
   - Class: rviz/Displays
     Help Height: 75
     Name: Displays
@@ -39,6 +40,7 @@ Panels:
         - /itst_desc1
         - /others1
         - /others1/estimate_result1
+        - /others1/estimate_result1/Autocompute Value Bounds1
         - /prepare1
         - /prepare1/PR_num1
         - /lego-loam1
@@ -464,21 +466,21 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 10
-            Min Value: -10
-            Value: true
+            Max Value: 15
+            Min Value: -3
+            Value: false
           Axis: Z
           Channel Name: z
           Class: rviz/PointCloud2
           Color: 255; 255; 255
-          Color Transformer: Intensity
+          Color Transformer: AxisColor
           Decay Time: 0
           Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
-          Max Intensity: 14.0004616
+          Max Intensity: 9.78462219
           Min Color: 0; 0; 0
-          Min Intensity: -4.13753557
+          Min Intensity: -5.01114893
           Name: estimate_result
           Position Transformer: XYZ
           Queue Size: 10
@@ -859,7 +861,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -1.59499991
+      Angle: -1.6099999
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
@@ -869,11 +871,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 3.42179585
+      Scale: 3.40408731
       Target Frame: map
       Value: TopDownOrtho (rviz)
-      X: 116.584129
-      Y: -0.0520304888
+      X: 111.996712
+      Y: 8.16628647
     Saved: ~
 Window Geometry:
   Displays:

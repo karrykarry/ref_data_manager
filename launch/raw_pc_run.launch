@@ -39,6 +39,6 @@
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ref_data_manager)/config/kidnapping.rviz"/>
 
 
-  <node pkg="pcl_ros" type="pcd_to_pointcloud" name="pcd_to_pointcloud" args="/home/amsl/map/perfect_ikuta_2019-09-25-00-48-08.pcd _frame_id:=/map" />
+  <node pkg="pcl_ros" type="pcd_to_pointcloud" name="pcd_to_pointcloud" args="/home/amsl/map/perfect_ikuta_2019-09-25-00-48-08_v2.pcd _frame_id:=/map" />
 
 </launch>
