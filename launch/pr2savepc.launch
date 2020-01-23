@@ -7,7 +7,17 @@
 		<!-- <remap from="/velodyne_points" to="/pr/pc" /> -->
 		<remap from="/velodyne_points" to="/velodyne_points/slam" />
 	</node>
-	
+
+
+	<node name="pr2save_transpc" pkg="ref_data_manager" type="pr2savepc" output="screen" >
+		<param name="PCD_INFO/FILE_DIR" value="/home/amsl/Pictures/ros_catkin_ws/ref_data_manager" />
+		<param name="PCD_INFO/FILE_DIR2" value="/sample" />
+		<param name="PCD_INFO/FILE_DIR3" value="/trans_pcd" />
+
+		<remap from="/velodyne_points" to="/velodyne_obstacles/trans" />
+	</node>
+
+
 </launch>
 
 

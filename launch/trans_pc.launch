@@ -6,7 +6,8 @@
 		<param name="CHILD_FRAME" value="/not_rot_baselink" />
 		<param name="VELODYNE_FRAME" value="/not_rot_velodyne" />
 		
-		<remap from="/velodyne_points" to="/pr/pc" />
+		<!-- <remap from="/velodyne_points" to="/pr/pc" /> -->
+		<remap from="/velodyne_points" to="/velodyne_obstacles/itst" />
 		<remap from="/velodyne_points/trans" to="/velodyne_obstacles/trans" />
 	</node>
 	

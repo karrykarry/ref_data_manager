@@ -34,7 +34,7 @@ class Trans_pc{
 		ros::Subscriber pc_sub;
 		ros::Subscriber odom_sub;
 
-		pcl::PointCloud<pcl::PointXYZI>::Ptr input_cloud;
+		pcl::PointCloud<pcl::PointXYZINormal>::Ptr input_cloud;
 
 		std::string PARENT_FRAME, CHILD_FRAME, VELODYNE_FRAME;
 		geometry_msgs::Quaternion buffer_quat;
@@ -54,7 +54,7 @@ class Trans_pc{
 
 
 Trans_pc::Trans_pc(ros::NodeHandle n, ros::NodeHandle private_nh_):
-	input_cloud(new pcl::PointCloud<pcl::PointXYZI>), odom_flag(false)
+	input_cloud(new pcl::PointCloud<pcl::PointXYZINormal>), odom_flag(false)
 {	
 	pc_pub= n.advertise<sensor_msgs::PointCloud2>("/velodyne_points/trans", 1000);
 	pc_sub = n.subscribe("/velodyne_points", 1, &Trans_pc::lidarCallback, this);
@@ -102,7 +102,7 @@ Trans_pc::odomCallback(const nav_msgs::OdometryConstPtr& msg)
 void 
 Trans_pc::lidarCallback(const sensor_msgs::PointCloud2ConstPtr& input)
 {
-	pcl::PointCloud<pcl::PointXYZI>::Ptr transformed_cloud (new pcl::PointCloud<pcl::PointXYZI>);
+	pcl::PointCloud<pcl::PointXYZINormal>::Ptr transformed_cloud (new pcl::PointCloud<pcl::PointXYZINormal>);
     // Convert the sensor_msgs/PointCloud2 data to pcl/PointCloud
 	pcl::fromROSMsg (*input, *input_cloud);
 	sensor_msgs::PointCloud2 after_pc;
@@ -110,6 +110,10 @@ Trans_pc::lidarCallback(const sensor_msgs::PointCloud2ConstPtr& input)
 	if(odom_flag){
 		double roll, pitch, yaw;
 		GetRPY(buffer_quat, roll, pitch, yaw);
+
+		roll = 0.0;
+		pitch= 0.0;
+
 
 		Eigen::Matrix3f rot;
 		rot = Eigen::AngleAxisf(roll*(-1), Eigen::Vector3f::UnitX()) * Eigen::AngleAxisf(pitch*(-1), Eigen::Vector3f::UnitY()) * Eigen::AngleAxisf(yaw, Eigen::Vector3f::UnitZ());

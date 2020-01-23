@@ -58,9 +58,10 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	file_count(0), now_time(0)
 {
 	// pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_obstacles/itst", 10);
-	pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points/slam", 10);
+	pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points", 10);
 
-	pc_file_name = "/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/pcd";
+	private_nh_.param("PC_FILE_NAME", pc_file_name, {"/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/pcd"});
+
 }
 
 
@@ -91,10 +92,10 @@ Test_pc_run::pc_publisher(const int num, const ros::Time now_time_){
 
 int main (int argc, char** argv)
 {
-	ros::init(argc, argv, "test_pc_save");
+	ros::init(argc, argv, "pub_pcd");
 	ros::NodeHandle n;
 	ros::NodeHandle private_nh_("~");
-    ROS_INFO("\033[1;32m---->\033[0mtest_pc_save Started.");
+    ROS_INFO("\033[1;32m---->\033[0mpub_pcd Started.");
 	
 	Test_pc_run test_pc_run(n, private_nh_);
 	
