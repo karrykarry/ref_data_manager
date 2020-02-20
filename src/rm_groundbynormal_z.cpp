@@ -11,12 +11,14 @@ using namespace std;
 
 
 ros::Publisher pc_pub;
+ros::Publisher pc_pub_;
 double rm_normal;
 
 void sq_lidarCallback(const sensor_msgs::PointCloud2ConstPtr& input)
 {
 	pcl::PointCloud<pcl::PointXYZINormal>::Ptr input_cloud (new pcl::PointCloud<pcl::PointXYZINormal>);
 	pcl::PointCloud<pcl::PointXYZINormal>::Ptr rm_cloud (new pcl::PointCloud<pcl::PointXYZINormal>);
+	pcl::PointCloud<pcl::PointXYZINormal>::Ptr g (new pcl::PointCloud<pcl::PointXYZINormal>);
 
     pcl::fromROSMsg (*input, *input_cloud);
 	
@@ -24,6 +26,7 @@ void sq_lidarCallback(const sensor_msgs::PointCloud2ConstPtr& input)
 		if(pc.normal_z > rm_normal){
 			rm_cloud->push_back(pc);
 		}
+		else g->push_back(pc);
 	}
 	
 	sensor_msgs::PointCloud2 pc;
@@ -34,6 +37,12 @@ void sq_lidarCallback(const sensor_msgs::PointCloud2ConstPtr& input)
 
 	pc_pub.publish(pc);
 
+    pcl::toROSMsg(*g , pc);           
+           
+	pc.header.frame_id = "/velodyne"; //laserのframe_id
+	pc.header.stamp = input->header.stamp; 
+
+	pc_pub_.publish(pc);
 }
 
 
@@ -47,6 +56,7 @@ int main (int argc, char** argv)
 	
 
     pc_pub = n.advertise<sensor_msgs::PointCloud2>("/velodyne_obstacles", 1);	
+    pc_pub_ = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points/ground", 1);	
     ros::Subscriber lidar_sub = n.subscribe("/velodyne_points", 1, sq_lidarCallback);
 
 

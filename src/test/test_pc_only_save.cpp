@@ -45,9 +45,9 @@ Test_pc_save::Test_pc_save(ros::NodeHandle n, ros::NodeHandle private_nh_):
 {	
 	pc_sub = n.subscribe("/velodyne_points", 1, &Test_pc_save::lidarCallback, this);
 	
-	private_nh_.param("TEST/FILE_DIR", file_dir, {"/home/amsl/Pictures/ros_catkin_ws/test/lidar_only"});
-	private_nh_.param("TEST/FILE_DIR2", file_dir2, {"/0925"});
-	private_nh_.param("SKIP_TIME", SKIP_TIME, {10});
+	private_nh_.param("TEST/FILE_DIR", file_dir, {"/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample"});
+	private_nh_.param("TEST/FILE_DIR2", file_dir2, {"/test_pcd"});
+	private_nh_.param("SKIP_TIME", SKIP_TIME, {1});
 	
 	pc_file_name = file_dir;
 	pc_file_name += file_dir2;

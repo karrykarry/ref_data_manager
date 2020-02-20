@@ -20,7 +20,7 @@ class PC_save{
 		std::string file_dir, file_dir2, file_dir3;
 		std::string file_name;
 
-		pcl::PointCloud<pcl::PointXYZI>::Ptr input_cloud;
+		pcl::PointCloud<pcl::PointXYZINormal>::Ptr input_cloud;
 		
 	public:
 		PC_save(ros::NodeHandle n, ros::NodeHandle private_nh_);
@@ -30,7 +30,7 @@ class PC_save{
 
 
 PC_save::PC_save(ros::NodeHandle n, ros::NodeHandle private_nh_):
-	input_cloud(new pcl::PointCloud<pcl::PointXYZI>)
+	input_cloud(new pcl::PointCloud<pcl::PointXYZINormal>)
 {	
 	pc_sub = n.subscribe("/velodyne_points", 1, &PC_save::lidar_Callback, this);
 	

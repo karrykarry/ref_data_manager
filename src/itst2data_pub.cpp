@@ -48,9 +48,9 @@ Itst2data_pub::make_vis_marker(const double now_x,const double now_y,const doubl
 	m.action = visualization_msgs::Marker::ADD;
 	m.lifetime = ros::Duration(0);
 	// 形
-	m.color.r = 1.0;
+	m.color.r = 0.0;
 	m.color.g = 1.0;
-	m.color.b = 1.0;
+	m.color.b = 0.0;
 	m.color.a = 1.0; 
 
 	m.pose.orientation.x = 0.0;
@@ -61,7 +61,7 @@ Itst2data_pub::make_vis_marker(const double now_x,const double now_y,const doubl
 	m.pose.position.y = now_y;	
 	m.pose.position.z = now_z;
 
-	m.scale.z = 6.0; 
+	m.scale.z = 5.0; 
 
 	m.id = id_num;
 	m.text =  std::to_string(num).substr(0,4);
@@ -152,7 +152,7 @@ Itst2data_pub::best_num_vis(const int num){
 	visualization_msgs::Marker est_num;	//estimate_num
 	est_num =  make_vis_marker(pr_poses[num].x, pr_poses[num].y, pr_poses[num].z, num, 0);
 
-	color_change(est_num, 1.0, 1.0, 1.0, 1.0);	//white
+	color_change(est_num, 1.0, 0.0, 0.0, 1.0);	//white
 	
 	best_estimate_num_pub.publish(est_num);
 }
@@ -198,22 +198,25 @@ Itst2data_pub::betterscorecallback(const std_msgs::Int32MultiArrayConstPtr &msgs
 
 	std_msgs::Int32MultiArray better_scores = *msgs;
 
-	better_scores.data.erase(better_scores.data.begin());// 一番scoreが高いもの(best)を削除
-
 	std::vector<bool> flag(pr_num_, false);
+	
+	flag[*better_scores.data.begin()] = true;
+
+	better_scores.data.erase(better_scores.data.begin());// 一番scoreが高いもの(best)を削除
 
 	visualization_msgs::MarkerArray better_array;
 	visualization_msgs::MarkerArray remain_array;
 	visualization_msgs::Marker num_m;
 
 	int cnt_=0;
-	for(auto msg : msgs->data){
+	// for(auto msg : msgs->data){
+	for(auto msg : better_scores.data){
 		int num = msg;
 		if(!flag[num]){
 			num_m = make_vis_marker(pr_poses[num].x, pr_poses[num].y, pr_poses[num].z, num, cnt_);
 			cnt_++;
 
-			color_change(num_m, 1.0, 1.0, 0.0, 1.0);	//red
+			color_change(num_m, 1.0, 1.0, 0.0, 0.35);	//red
 			better_array.markers.push_back(num_m);
 			flag[num]=true;
 		}
@@ -224,12 +227,12 @@ Itst2data_pub::betterscorecallback(const std_msgs::Int32MultiArrayConstPtr &msgs
 	// itst2context(msg->data);
 	
 	cnt_=0;
-	for(int i=0;i<=pr_num_;i++){
+	for(int i=0;i<pr_num_;i++){
 		if(flag[i]) continue;
 		num_m = make_vis_marker(pr_poses[i].x, pr_poses[i].y, pr_poses[i].z, i, cnt_);
 		cnt_++;
 		
-		color_change(num_m, 0.0, 1.0, 0.0, 1.0);	//green
+		color_change(num_m, 0.0, 1.0, 0.0, 0.35);	//green
 		remain_array.markers.push_back(num_m);
 	}
 

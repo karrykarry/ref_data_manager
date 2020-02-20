@@ -42,7 +42,7 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	if(IS_CLEANUP) 
 		// miss_checker = new Miss_checker("/home/amsl/m2_result/miss_file-2019-9-25-cnnok.txt");
 		// miss_checker = new Miss_checker("/home/amsl/m2_result/out_file-2018-9-9-bestonly.txt");
-		miss_checker = new Miss_checker("/home/amsl/m2_result/miss_file_.txt");
+		miss_checker = new Miss_checker("/home/amsl/m2_result/miss_file_abareuma.txt");
 
 	pc_file_name = file_dir;
 	pc_file_name += file_dir2;

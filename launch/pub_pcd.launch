@@ -3,11 +3,11 @@
 	
 	<node name="pub_pcd" pkg="ref_data_manager" type="pub_pcd" output="screen" >
 		
-		<!-- <param name="PC_FILE_NAME" value="/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/pcd" /> -->
-		<!-- <remap from="/velodyne_points" to="/velodyne_points/slam" /> -->
+		<param name="PC_FILE_NAME" value="/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/pcd" />
+		<remap from="/velodyne_points" to="/velodyne_points/slam" />
 	
-		<param name="PC_FILE_NAME" value="/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/trans_pcd" />
-		<remap from="/velodyne_points" to="/velodyne_obstacles/trans" />
+		<!-- <param name="PC_FILE_NAME" value="/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/trans_pcd" /> -->
+		<!-- <remap from="/velodyne_points" to="/velodyne_obstacles/trans" /> -->
 	
 	
 	</node>

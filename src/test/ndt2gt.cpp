@@ -64,7 +64,9 @@ Test_pc_run::Test_pc_run(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	
 	map_pub = n.advertise<sensor_msgs::PointCloud2>("/cloud_pcd", 1, true);
 
-	private_nh_.param("TGT_FILE_NAME", tgt_file_name, {"/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/perfect_tkb_2018-09-15-14-08_v3.pcd"});
+	private_nh_.param("TGT_FILE_NAME", tgt_file_name, {"/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/perfect_ikuta_2020-02-08.pcd"});
+	// private_nh_.param("TGT_FILE_NAME", tgt_file_name, {"/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/perfect_ikuta_2019-09-25-00-48-08_v3.pcd"});
+// private_nh_.param("TGT_FILE_NAME", tgt_file_name, {"/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/perfect_tkb_2018-09-15-14-08_v3.pcd"});
 	
 	private_nh_.param("SRC_FILE_NAME", src_file_name, {"/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/test_pcd"});
 	private_nh_.param("SRC_POSE_FILE_NAME", src_pose_file_name, {"/home/amsl/Pictures/ros_catkin_ws/ref_data_manager/sample/test_pose"});

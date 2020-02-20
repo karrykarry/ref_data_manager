@@ -11,15 +11,24 @@
 	<!-- </node> -->
 
 	
+	<!-- <node name="test_pc_save_ndt" pkg="ref_data_manager" type="test_pc_save" output="screen" > -->
+	<!-- 	<!&#45;&#45; <rosparam file="$(find ref_data_manager)/config/experiment_info.yaml"/> &#45;&#45;> -->
+	<!-- 	<param name="TEST/ODOM_LIST" value="/list_ndt.txt"/> -->
+	<!-- 	<param name="TEST/PC_FILE_DIR" value="/ndt_pcd"/> -->
+	<!-- 	<param name="SKIP_TIME" value="1" /> -->
+    <!--  -->
+    <!--  -->
+	<!-- 	<remap from="/odometer" to="/vis/odometry" /> -->
+	<!-- </node> -->
+	
 	<node name="test_pc_save" pkg="ref_data_manager" type="test_pc_save" output="screen" >
 		<rosparam file="$(find ref_data_manager)/config/experiment_info.yaml"/>
-		<param name="SKIP_TIME" value="10" />
+		<param name="SKIP_TIME" value="1" />
 
 
-		<remap from="/odometer" to="/vis/odometry" />
+		<!-- <remap from="/odometer" to="/vis/odometry" /> -->
 		<!-- <remap from="/velodyne_points" to="/velodyne_obstacles/test" /> -->
 	</node>
-	
 </launch>
 
 
